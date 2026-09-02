@@ -5,7 +5,7 @@ import Image from "next/image";
 
 export default function Header() {
     return (
-        <header className="bg-white px-8 py-4 flex justify-between items-center">
+        <header className="bg-gray-200 px-8 py-4 flex justify-between items-center">
             <div className="flex gap-3 flex-row items-center justify-center">
                 <div className="relative w-15 h-15 min-h-[50px] bg-gradient-to-b from-gray-900 to-gray-800 rounded-full">
                     <Image
@@ -27,7 +27,8 @@ export default function Header() {
                 <Link href="/" className="text-gray-800 font-medium hover:text-gray-600">Home</Link>
                 <Link href="/menu" className="text-yellow-500 font-semibold hover:text-yellow-600">Menu</Link>
                 <Link href="/deals" className="text-yellow-500 font-semibold hover:text-yellow-600">Hot deals</Link>
-                <Link href="/" className="text-gray-800 font-medium hover:text-gray-600">Blog</Link>
+                <Link href="/blog" className="text-gray-800 font-medium hover:text-gray-600">Blog</Link>
+                <Link href="/book" className="text-gray-800 font-medium hover:text-gray-600">Book</Link>
             </nav>
 
             <Link href="/auth/signin">
