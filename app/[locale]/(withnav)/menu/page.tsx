@@ -8,7 +8,7 @@ const burgers = [
             "Lorem Ipsum is simply dummy text of the printing industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s",
         price: 4.5,
         oldPrice: 5.5,
-        image: "/Image/Burger1.jpg",
+        image: "/Image/MenuBurger1.png",
     },
     {
         id: 2,
@@ -17,7 +17,7 @@ const burgers = [
             "Lorem Ipsum is simply dummy text of the printing industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s",
         price: 5.0,
         oldPrice: 6.5,
-        image: "/Image/Burger2.jpg",
+        image: "/Image/MenuBurger2.png",
     },
     {
         id: 3,
@@ -26,7 +26,7 @@ const burgers = [
             "Lorem Ipsum is simply dummy text of the printing industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s",
         price: 3.5,
         oldPrice: 5.5,
-        image: "/Image/Burger3.jpg",
+        image: "/Image/MenuBurger3.png",
     },
     {
         id: 4,
@@ -35,7 +35,7 @@ const burgers = [
             "Lorem Ipsum is simply dummy text of the printing industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s",
         price: 4.5,
         oldPrice: 5.5,
-        image: "/Image/Burger1.jpg",
+        image: "/Image/Burger4.png",
     },
     {
         id: 5,
@@ -44,7 +44,7 @@ const burgers = [
             "Lorem Ipsum is simply dummy text of the printing industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s",
         price: 4.5,
         oldPrice: 5.5,
-        image: "/Image/Burger2.jpg",
+        image: "/Image/MenuBurger5.png",
     },
     {
         id: 6,
@@ -53,15 +53,14 @@ const burgers = [
             "Lorem Ipsum is simply dummy text of the printing industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s",
         price: 4.5,
         oldPrice: 5.5,
-        image: "/Image/Burger3.jpg",
+        image: "/Image/MenuBurger6.png",
     },
 ];
 
 export default function Menu() {
     return (
-        <section className="py-20 px-8">
+        <div className="py-20 px-8 bg-gray-100">
             <div className="max-w-6xl mx-auto">
-                {/* Başlıq */}
                 <h1 className="text-center text-4xl font-extrabold mb-4">
                     <span className="text-gray-900">Favorite</span>{" "}
                     <span className="text-yellow-500">Menu</span>
@@ -69,14 +68,9 @@ export default function Menu() {
                 <p className="text-center text-lg font-semibold text-gray-900 mb-12">
                     you can select your range-able burger
                 </p>
-
-                {/* Kartlar grid-i */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                     {burgers.map((burger) => (
-                        <div
-                            key={burger.id}
-                            className="bg-gray-100 rounded-xl overflow-hidden shadow-sm"
-                        >
+                        <div key={burger.id} className="bg-gray-100 rounded-xl overflow-hidden shadow-sm">
                             <div className="relative w-full h-52">
                                 <Image
                                     src={burger.image}
@@ -86,7 +80,6 @@ export default function Menu() {
                                     className="object-cover"
                                 />
                             </div>
-
                             <div className="p-5">
                                 <h3 className="text-lg font-bold text-gray-900 mb-2">
                                     {burger.name}
@@ -94,7 +87,6 @@ export default function Menu() {
                                 <p className="text-sm text-gray-600 leading-relaxed mb-4">
                                     {burger.description}
                                 </p>
-
                                 <div className="flex items-center justify-between">
                                     <div className="flex items-center gap-2">
                                         <span className="text-red-600 font-bold">
@@ -112,14 +104,12 @@ export default function Menu() {
                         </div>
                     ))}
                 </div>
-
-                {/* Explore Menu düyməsi */}
                 <div className="flex justify-center mt-12">
                     <button className="border border-yellow-500 text-gray-900 font-bold px-6 py-3 rounded-lg hover:bg-yellow-50">
                         Explore Menu
                     </button>
                 </div>
             </div>
-        </section>
+        </div>
     );
 }

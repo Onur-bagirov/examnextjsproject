@@ -1,12 +1,5 @@
-import Header from "@/components/base/header/header";
-import Footer from "@/components/base/footer/footer";
+import BurgerHome from "@/components/base/pages/burger-home";
 
-export default function WithNavLayout({ children }: { children: React.ReactNode }) {
-    return (
-        <div>
-            <Header />
-            {children}
-            <Footer />
-        </div>
-    );
+export default function Home() {
+    return <BurgerHome />;
 }
