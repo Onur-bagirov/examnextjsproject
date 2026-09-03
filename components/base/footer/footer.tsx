@@ -52,7 +52,7 @@ export default function Footer()
                                     height={24}
                                     className="cursor-pointer"/>
                                 <Image
-                                    src="/Image/facebook-app-symbol.png"
+                                    src="/Image/facebook.png"
                                     alt="facebook"
                                     width={24}
                                     height={24}

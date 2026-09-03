@@ -1,7 +1,8 @@
-import StatsCard from "@/components/admin/stats-card";
-import RecentOrders from "@/components/admin/recent-orders";
-import PopularItems from "@/components/admin/popular-items";
-import MenuManager from "@/components/admin/menu-manager";
+import { Package, DollarSign, Users, BarChart3 } from "lucide-react";
+import StatsCard from "@/components/base/admin/stat-card";
+import RecentOrders from "@/components/base/admin/recent-orders";
+import PopularItems from "@/components/base/admin/popular-items";
+import MenuManager from "@/components/base/admin/menu-manager";
 
 export default function AdminDashboard() 
 {
@@ -16,10 +17,10 @@ export default function AdminDashboard()
                 </p>
             </div>
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-                <StatsCard label="Total Orders" value="2,543" icon="📦" />
-                <StatsCard label="Revenue" value="$18,240" icon="💰" />
-                <StatsCard label="Active Users" value="1,204" icon="👥" />
-                <StatsCard label="Avg. Order Value" value="$7.16" icon="📊" />
+                <StatsCard label="Total Orders" value="2,543" icon={Package} trend="12% this week" trendUp />
+                <StatsCard label="Revenue" value="$18,240" icon={DollarSign} trend="8% this week" trendUp />
+                <StatsCard label="Active Users" value="1,204" icon={Users} trend="3% this week" trendUp />
+                <StatsCard label="Avg. Order Value" value="$7.16" icon={BarChart3} trend="2% this week" trendUp={false} />
             </div>
             <div className="grid gap-6 lg:grid-cols-3">
                 <div className="lg:col-span-2">

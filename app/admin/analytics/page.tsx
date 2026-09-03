@@ -21,7 +21,8 @@ export default function AnalyticsPage() {
                             { day: "Wednesday", amount: "$1,380" },
                             { day: "Thursday", amount: "$1,720" },
                             { day: "Friday", amount: "$2,100" },
-                        ].map((item) => (
+                        ].map((item) => 
+                        (
                             <div key={item.day} className="flex justify-between items-center p-3 bg-white/30 rounded-lg">
                                 <span className="text-sm font-medium text-gray-900">
                                     {item.day}
@@ -43,7 +44,8 @@ export default function AnalyticsPage() {
                             { category: "Sides", percentage: 25 },
                             { category: "Drinks", percentage: 20 },
                             { category: "Desserts", percentage: 10 },
-                        ].map((item) => (
+                        ].map((item) => 
+                        (
                             <div key={item.category} className="space-y-1">
                                 <div className="flex justify-between">
                                     <span className="text-sm font-medium text-gray-900">
@@ -56,10 +58,11 @@ export default function AnalyticsPage() {
                                 <div className="w-full h-2 bg-white/30 rounded-full overflow-hidden">
                                     <div
                                         className="h-full bg-gradient-to-r from-yellow-400 to-yellow-500"
-                                        style={{
+                                        style=
+                                        {{
                                             width: `${item.percentage}%`,
-                                        }}
-                                    ></div>
+                                        }}>
+                                    </div>
                                 </div>
                             </div>
                         ))}

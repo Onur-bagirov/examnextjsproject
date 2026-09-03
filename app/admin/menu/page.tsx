@@ -60,7 +60,8 @@ export default function MenuPage() {
                 </button>
             </div>
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-                {menuItems.map((item) => (
+                {menuItems.map((item) => 
+                (
                     <div key={item.id} className="rounded-2xl border border-white/40 bg-white/50 backdrop-blur-sm p-6 hover:bg-white/60 transition-all">
                         <div className="space-y-3">
                             <div>
