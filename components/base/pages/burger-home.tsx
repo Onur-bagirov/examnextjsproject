@@ -35,12 +35,10 @@ export default function BurgerHome() {
                     <p className="text-gray-600 text-lg leading-relaxed mb-12 max-w-md">
                         Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry&apos;s standard dummy text ever since the 1500s
                     </p>
-
                     <div className="flex items-center gap-4">
                         <button onClick={prevSlide} className="bg-yellow-400 rounded-full p-2 hover:bg-yellow-500 shrink-0">
                             <ChevronLeft size={20} className="text-black" />
                         </button>
-
                         <div className="flex gap-6 flex-1 justify-center">
                             {burgers.map((burger) => 
                             (
@@ -67,15 +65,13 @@ export default function BurgerHome() {
                         </button>
                     </div>
                 </div>
-
                 <div className="relative w-full h-full min-h-[500px] bg-gradient-to-b from-gray-900 to-gray-800">
                     <Image
-                        src="/Image/MainScreen.png"
-                        alt="Premium Burger"
+                        src="/Image/burger5.jpg"
+                        alt="burger5"
                         fill
                         className="object-cover"
-                        priority
-                    />
+                        priority/>
                 </div>
             </div>
         </main>

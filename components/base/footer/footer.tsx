@@ -1,8 +1,5 @@
 import Image from "next/image";
 
-
-
-
 export default function Footer()
 {
     return(
@@ -26,18 +23,16 @@ export default function Footer()
                     </button>
                 </div> 
             </div>
-
             <div className="bg-gray-100 px-8 py-16">
                 <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-10" >
                     <div>
                         <div className="flex items-center gap-3 mb-6">
                             <Image
                                 src="/Image/heder1.png"
-                                alt="Burger Hut"
+                                alt="heder1"
                                 width={48}
                                 height={48}
-                                className="object-cover w-12 h-12 rounded-full"
-                            />
+                                className="object-cover w-12 h-12 rounded-full"/>
                             <span className="text-2xl font-bold text-gray-900">
                                 BURGER <span className="italic font-normal">Hut</span>
                             </span>
@@ -52,32 +47,28 @@ export default function Footer()
                             <div className="flex gap-5 items-center">
                                 <Image
                                     src="/Image/twitter.png"
-                                    alt="Twitter"
+                                    alt="twitter"
                                     width={24}
                                     height={24}
-                                    className="cursor-pointer"
-                                />
+                                    className="cursor-pointer"/>
                                 <Image
                                     src="/Image/facebook-app-symbol.png"
-                                    alt="Facebook"
+                                    alt="facebook"
                                     width={24}
                                     height={24}
-                                    className="cursor-pointer"
-                                />
+                                    className="cursor-pointer"/>
                                 <Image
                                     src="/Image/instagram.png"
-                                    alt="Instagram"
+                                    alt="instagram"
                                     width={24}
                                     height={24}
-                                    className="cursor-pointer"
-                                />
+                                    className="cursor-pointer"/>
                                 <Image
                                     src="/Image/github.png"
-                                    alt="Github"
+                                    alt="github"
                                     width={24}
                                     height={24}
-                                    className="cursor-pointer"
-                                />
+                                    className="cursor-pointer"/>
                             </div>
                         </div>
                         <div>
@@ -102,15 +93,17 @@ export default function Footer()
                         <div>
                             <h3 className="text-xl font-bold mb-6 text-gray-900">Opening Time</h3>
                             <ul className="space-y-3 text-gray-800 font-medium list-disc list-inside">
-                            <li>
-                                Saturday to Wednesday
-                                <br />
-                                <span className="ml-4">(8:00 am to 9:00 pm)</span>
-                            </li>
-                            <li>Thursday (8am to 7pm)</li>
-                            <li>
-                                Friday (<span className="text-green-600">Close</span>)
-                            </li>
+                                <li>
+                                    Saturday to Wednesday
+                                    <br />
+                                    <span className="ml-4">(8:00 am to 9:00 pm)</span>
+                                </li>
+                                <li>
+                                    Thursday (8am to 7pm)
+                                </li>
+                                <li>
+                                    Friday (<span className="text-green-600">Close</span>)
+                                </li>
                             </ul>
                         </div>
                     <div/>

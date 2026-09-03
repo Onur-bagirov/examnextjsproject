@@ -2,7 +2,7 @@ import Image from "next/image";
 
 export default function Deals() {
     return (
-        <div className="py-20 px-8 bg-gray-100">
+        <div className="py-20 px-8 bg-white">
             <div className="max-w-6xl mx-auto">
                 <h1 className="text-center text-4xl font-extrabold mb-4">
                     <span className="text-gray-900">Hot</span>{" "}
@@ -15,7 +15,7 @@ export default function Deals() {
                     <div className="relative w-full md:w-1/2 h-80">
                         <Image
                             src="/Image/burgercombo.png"
-                            alt="Special Combo Pack"
+                            alt="burgercombo"
                             fill
                             sizes="(max-width: 768px) 100vw, 50vw"
                             className="object-contain"/>
