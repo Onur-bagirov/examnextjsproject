@@ -1,126 +1,194 @@
 "use client";
 
 import { cn } from "@/lib/utils";
-import { Field,FieldDescription,FieldError,FieldGroup,FieldLabel,} from "@/components/ui/field";
+import {
+  Field,
+  FieldDescription,
+  FieldError,
+  FieldGroup,
+  FieldLabel,
+} from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import Link from "next/link";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { SignupFormSchema, signupFormSchema } from "./signup-form.schema";
+import { api } from "@/shared/api-instace";
 
-export function SignupForm(
-{
-    className,
-    ...props
-}: React.ComponentProps<"form">) 
-{
-    const router = useRouter();
-    const [serverError, setServerError] = useState<string | null>(null);
+export function SignupForm({
+  className,
+  ...props
+}: React.ComponentProps<"form">) {
+  const router = useRouter();
+  const [serverError, setServerError] = useState<string | null>(null);
 
-    const 
-    {
-        register,
-        handleSubmit,
-        formState: { errors, isSubmitting },
-    } = useForm<SignupFormSchema>(
-    {
-        resolver: zodResolver(signupFormSchema),
-        defaultValues: {
-            email: "",
-            password: "",
-            birthDate: "",
-        },
-    });
+  const {
+    register,
+    handleSubmit,
+    setError,
+    formState: { errors, isSubmitting },
+  } = useForm<SignupFormSchema>({
+    resolver: zodResolver(signupFormSchema),
+    defaultValues: {
+      name: "",
+      email: "",
+      password: "",
+      confirmPassword: "",
+    },
+  });
 
-    const onSubmit = async (data: SignupFormSchema) => 
-    {
-        try 
-        {
-            setServerError(null);
-            console.log("Sign up with:", data);
-            await new Promise((resolve) => setTimeout(resolve, 600));
+  const handleSignupWithGoogle = async () => {
+    try {
+      const result = await signIn("google", {
+        redirect: true,
+        callbackUrl: "/",
+      });
+      if (result?.error) {
+        throw new Error(result.error);
+      }
+    } catch (error) {
+      console.error(error);
+      setServerError("Google signup failed. Please try again.");
+    }
+  };
 
-            router.push("/auth/signin");
-            router.refresh();
-        } 
-        catch (error) 
-        {
-            console.error(error);
-            setServerError("Qeydiyyat zamanı xəta baş verdi. Yenidən cəhd edin.");
-        }
-    };
+  const onSubmit = async (data: SignupFormSchema) => {
+    try {
+      setServerError(null);
+      const response = await api.post("/users", {
+        name: data.name,
+        email: data.email,
+        password: data.password,
+      });
 
-    return (
-        <form className={cn("flex flex-col gap-2", className)} {...props} onSubmit={handleSubmit(onSubmit)}>
-            <FieldGroup className="gap-5">
-                <div className="flex flex-col gap-1">
-                    <h1 className="text-3xl font-extrabold text-white">
-                        Create <span className="text-yellow-500">Account</span>
-                    </h1>
-                    <p className="text-sm text-gray-300">
-                        Fill in your details below to join Burger Hut.
-                    </p>
-                </div>
-                <Field>
-                    <FieldLabel htmlFor="email">Email</FieldLabel>
-                    <Input
-                        id="email"
-                        variant="auth"
-                        type="email"
-                        placeholder="name@gmail.com"
-                        {...register("email")}/>
+      if (response.status === 409) {
+        setError("email", { message: response.data.error });
+        return;
+      }
 
-                    {errors.email && <FieldError>{errors.email.message}</FieldError>}
-                    <FieldDescription className="text-gray-400">
-                        Only Gmail addresses are accepted.
-                    </FieldDescription>
-                </Field>
-                <Field>
-                    <FieldLabel htmlFor="password">Password</FieldLabel>
-                    <Input
-                        id="password"
-                        variant="auth"
-                        type="password"
-                        placeholder="••••••••"
-                        {...register("password")}/>
-                    {errors.password && 
-                    (
-                        <FieldError>{errors.password.message}</FieldError>
-                    )}
-                    <FieldDescription className="text-gray-400">
-                        Must be at least 6 characters long.
-                    </FieldDescription>
-                </Field>
-                <Field>
-                    <FieldLabel htmlFor="birthDate">Date of Birth</FieldLabel>
-                    <Input
-                        id="birthDate"
-                        variant="auth"
-                        type="date"
-                        {...register("birthDate")}/>
-                    {errors.birthDate && 
-                    (
-                        <FieldError>{errors.birthDate.message}</FieldError>
-                    )}
-                </Field>
-                {serverError && <FieldError>{serverError}</FieldError>}
-                <Field>
-                    <button
-                        type="submit"
-                        disabled={isSubmitting}
-                        className="w-full rounded-lg bg-yellow-400 py-3 text-sm font-bold text-gray-900 transition-colors hover:bg-yellow-500 disabled:opacity-60">
-                        {isSubmitting ? "Creating account..." : "SIGN UP"}
-                    </button>
-                </Field>
-                <FieldDescription className="text-center text-gray-300">
-                    Already have an account?{" "}
-                    <Link href="/auth/signin" className="font-semibold text-white underline-offset-4 hover:underline">
-                        Sign in
-                    </Link>
-                </FieldDescription>
-            </FieldGroup>
-        </form>
-    );
+      if (response.status !== 201) {
+        throw new Error(response.data.error || "Failed to create user");
+      }
+
+      router.push("/auth/signin");
+      router.refresh();
+    } catch (error) {
+      console.error(error);
+      setServerError("Qeydiyyat zamanı xəta baş verdi. Yenidən cəhd edin.");
+    }
+  };
+
+  return (
+    <form
+      className={cn("flex flex-col gap-2", className)}
+      {...props}
+      onSubmit={handleSubmit(onSubmit)}
+    >
+      <FieldGroup className="gap-5">
+        <div className="flex flex-col gap-1">
+          <h1 className="text-3xl font-extrabold text-white">
+            Create <span className="text-yellow-500">Account</span>
+          </h1>
+          <p className="text-sm text-gray-300">
+            Fill in your details below to join us.
+          </p>
+        </div>
+
+        <Field>
+          <FieldLabel htmlFor="name">Full Name</FieldLabel>
+          <Input
+            id="name"
+            variant="auth"
+            type="text"
+            placeholder="John Doe"
+            {...register("name")}
+          />
+          {errors.name && <FieldError>{errors.name.message}</FieldError>}
+        </Field>
+
+        <Field>
+          <FieldLabel htmlFor="email">Email</FieldLabel>
+          <Input
+            id="email"
+            variant="auth"
+            type="email"
+            placeholder="name@gmail.com"
+            {...register("email")}
+          />
+          {errors.email && <FieldError>{errors.email.message}</FieldError>}
+        </Field>
+
+        <Field>
+          <FieldLabel htmlFor="password">Password</FieldLabel>
+          <Input
+            id="password"
+            variant="auth"
+            type="password"
+            placeholder="••••••••"
+            {...register("password")}
+          />
+          {errors.password && (
+            <FieldError>{errors.password.message}</FieldError>
+          )}
+          <FieldDescription className="text-gray-400">
+            Must be at least 8 characters long.
+          </FieldDescription>
+        </Field>
+
+        <Field>
+          <FieldLabel htmlFor="confirm-password">Confirm Password</FieldLabel>
+          <Input
+            id="confirm-password"
+            variant="auth"
+            type="password"
+            placeholder="••••••••"
+            {...register("confirmPassword")}
+          />
+          {errors.confirmPassword && (
+            <FieldError>{errors.confirmPassword.message}</FieldError>
+          )}
+        </Field>
+
+        {serverError && <FieldError>{serverError}</FieldError>}
+
+        <Field>
+          <button
+            type="submit"
+            disabled={isSubmitting}
+            className="w-full rounded-lg bg-yellow-400 py-3 text-sm font-bold text-gray-900 transition-colors hover:bg-yellow-500 disabled:opacity-60"
+          >
+            {isSubmitting ? "Creating account..." : "SIGN UP"}
+          </button>
+        </Field>
+
+        <span className="text-sm text-gray-300 text-center">
+          Or continue with
+        </span>
+
+        <Field>
+          <button
+            type="button"
+            disabled={isSubmitting}
+            onClick={handleSignupWithGoogle}
+            className="w-full rounded-lg bg-white py-3 text-sm font-bold text-gray-900 transition-colors hover:bg-gray-100 disabled:opacity-60"
+          >
+            Sign up with Google
+          </button>
+
+          <FieldDescription className="text-center text-gray-300">
+            Already have an account?{" "}
+            <Link
+              href="/auth/signin"
+              className="font-semibold text-white underline-offset-4 hover:underline"
+            >
+              Sign in
+            </Link>
+          </FieldDescription>
+        </Field>
+      </FieldGroup>
+    </form>
+  );
 }
