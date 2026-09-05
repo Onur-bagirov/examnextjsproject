@@ -1,134 +1,52 @@
-import type { NextAuthOptions, User, Session } from "next-auth";
-import type { JWT } from "next-auth/jwt";
-import GoogleProvider from "next-auth/providers/google";
-import CredentialProvider from "next-auth/providers/credentials";
-import { prisma } from "@/lib/db";
+import CredentialsProvider from "next-auth/providers/credentials";
+import { prisma } from "./db";
 import bcrypt from "bcryptjs";
 
-declare module "next-auth" {
-  interface Session {
-    user: {
-      id: string;
-      email: string;
-      name?: string | null;
-      image?: string | null;
-    };
-  }
-
-  interface User {
-    id: string;
-    email: string;
-    name?: string | null;
-    image?: string | null;
-  }
-}
-
-declare module "next-auth/jwt" {
-  interface JWT {
-    id: string;
-    email: string;
-  }
-}
-
-export const authOptions: NextAuthOptions = {
+export const authOptions = {
   providers: [
-    GoogleProvider({
-      clientId: process.env.GOOGLE_ID || "",
-      clientSecret: process.env.GOOGLE_SECRET || "",
-    }),
-    CredentialProvider({
-      name: "credentials",
+    CredentialsProvider({
+      name: "Credentials",
       credentials: {
-        email: { label: "Email", type: "email" },
+        email: { label: "Email", type: "text" },
         password: { label: "Password", type: "password" },
       },
-      async authorize(credentials): Promise<User | null> {
-        try {
-          if (!credentials?.email || !credentials?.password) {
-            return null;
-          }
-
-          const user = await prisma.user.findUnique({
-            where: { email: credentials.email },
-          });
-
-          if (!user?.password) {
-            return null;
-          }
-
-          const passwordsMatch = await bcrypt.compare(
-            credentials.password,
-            user.password
-          );
-
-          if (!passwordsMatch) {
-            return null;
-          }
-
-          return {
-            id: user.id,
-            name: user.name ?? null,
-            email: user.email,
-          };
-        } catch (error) {
-          console.error("Auth error:", error);
-          return null;
+      async authorize(credentials) {
+        if (!credentials?.email || !credentials?.password) {
+          throw new Error("Invalid credentials");
         }
+
+        const user = await prisma.user.findUnique({
+          where: { email: credentials.email },
+        });
+
+        if (!user) {
+          throw new Error("User not found");
+        }
+
+        const isPasswordValid = await bcrypt.compare(
+          credentials.password,
+          user.password || ""
+        );
+
+        if (!isPasswordValid) {
+          throw new Error("Invalid password");
+        }
+
+        return {
+          id: user.id,
+          email: user.email,
+          name: user.name,
+          role: user.role,
+        };
       },
     }),
   ],
+  pages: {
+    signIn: "/en/auth/signin",
+    signUp: "/en/auth/signup",
+  },
   session: {
-    strategy: "jwt" as const,
+    strategy: "jwt",
   },
   secret: process.env.NEXTAUTH_SECRET,
-  pages: {
-    signIn: "/auth/signin",
-  },
-  callbacks: {
-    async jwt({ token, user, account }) {
-      if (user) {
-        token.id = user.id;
-        token.email = user.email;
-      }
-
-      if (account?.provider === "google" && user) {
-        token.id = user.id;
-      }
-
-      return token;
-    },
-    async session({ session, token }) {
-      if (session.user) {
-        session.user.id = token.id;
-        session.user.email = token.email;
-      }
-      return session;
-    },
-    async signIn({ user, account }) {
-      if (account?.provider === "google") {
-        try {
-          const existingUser = await prisma.user.findUnique({
-            where: { email: user.email || "" },
-          });
-
-          if (!existingUser) {
-            const newUser = await prisma.user.create({
-              data: {
-                email: user.email || "",
-                name: user.name || "",
-                image: user.image,
-                role: "USER",
-              },
-            });
-            user.id = newUser.id;
-          } else {
-            user.id = existingUser.id;
-          }
-        } catch (error) {
-          console.error("Google sign in error:", error);
-        }
-      }
-      return true;
-    },
-  },
 };
