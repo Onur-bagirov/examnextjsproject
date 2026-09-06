@@ -4,18 +4,25 @@ import { JWT } from "next-auth/jwt";
 import { prisma } from "./db";
 import bcrypt from "bcryptjs";
 
-declare module "next-auth" {
+declare module "next-auth" 
+{
   interface Session extends DefaultSession 
   {
-    user?: {
+    user?: 
+    {
       id?: string;
       role?: string;
+      image?: string;
     } & DefaultSession["user"];
   }
 
   interface User 
   {
-    role?: string;
+    id: string;
+    email: string;
+    name: string | null;
+    role: string;
+    image?: string | null;
   }
 }
 
@@ -25,19 +32,23 @@ declare module "next-auth/jwt"
   {
     id?: string;
     role?: string;
+    image?: string | null;
   }
 }
 
 export const authOptions: NextAuthOptions = {
-  providers: [
+  providers: 
+  [
     CredentialsProvider(
     {
       name: "Credentials",
-      credentials: {
+
+      credentials: 
+      {
         email: { label: "Email", type: "text" },
         password: { label: "Password", type: "password" },
       },
-      async authorize(credentials) 
+      async authorize(credentials: any) 
       {
         if (!credentials?.email || !credentials?.password) 
         {
@@ -54,8 +65,7 @@ export const authOptions: NextAuthOptions = {
           throw new Error("User not found");
         }
 
-        const isPasswordValid = await bcrypt.compare
-        (
+        const isPasswordValid = await bcrypt.compare(
           credentials.password,
           user.password || ""
         );
@@ -70,6 +80,7 @@ export const authOptions: NextAuthOptions = {
           email: user.email,
           name: user.name,
           role: user.role,
+          image: user.image,
         };
       },
     }),
@@ -84,21 +95,23 @@ export const authOptions: NextAuthOptions = {
   },
   callbacks: 
   {
-    async jwt({ token, user }) 
+    async jwt({ token, user }: { token: JWT; user?: any }) 
     {
       if (user) 
       {
         token.id = user.id;
         token.role = user.role;
+        token.image = user.image;
       }
       return token;
     },
-    async session({ session, token }) 
+    async session({ session, token }: { session: any; token: JWT }) 
     {
       if (session.user) 
       {
         session.user.id = token.id as string;
         session.user.role = token.role as string;
+        session.user.image = token.image as string | null;
       }
       return session;
     },
