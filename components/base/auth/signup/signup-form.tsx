@@ -1,13 +1,7 @@
 "use client";
 
 import { cn } from "@/lib/utils";
-import {
-  Field,
-  FieldDescription,
-  FieldError,
-  FieldGroup,
-  FieldLabel,
-} from "@/components/ui/field";
+import { Field,FieldDescription,FieldError,FieldGroup,FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import Link from "next/link";
 import { useForm } from "react-hook-form";
@@ -18,21 +12,29 @@ import { useState } from "react";
 import { SignupFormSchema, signupFormSchema } from "./signup-form.schema";
 import { api } from "@/shared/api-instace";
 
-export function SignupForm({
+export function SignupForm(
+{
   className,
   ...props
-}: React.ComponentProps<"form">) {
+}: 
+React.ComponentProps<"form">) 
+{
   const router = useRouter();
   const [serverError, setServerError] = useState<string | null>(null);
 
-  const {
+  const 
+  {
     register,
     handleSubmit,
     setError,
     formState: { errors, isSubmitting },
-  } = useForm<SignupFormSchema>({
+  } = 
+  useForm<SignupFormSchema>(
+  {
     resolver: zodResolver(signupFormSchema),
-    defaultValues: {
+
+    defaultValues: 
+    {
       name: "",
       email: "",
       password: "",
@@ -40,53 +42,63 @@ export function SignupForm({
     },
   });
 
-  const handleSignupWithGoogle = async () => {
-    try {
-      const result = await signIn("google", {
+  const handleSignupWithGoogle = async () => 
+  {
+    try 
+    {
+      const result = await signIn("google", 
+      {
         redirect: true,
         callbackUrl: "/",
       });
-      if (result?.error) {
+
+      if (result?.error) 
+      {
         throw new Error(result.error);
       }
-    } catch (error) {
+    } 
+    catch (error) 
+    {
       console.error(error);
       setServerError("Google signup failed. Please try again.");
     }
   };
 
   const onSubmit = async (data: SignupFormSchema) => {
-    try {
+    try 
+    {
       setServerError(null);
-      const response = await api.post("/users", {
+
+      const response = await api.post("/api/users", 
+      {
         name: data.name,
         email: data.email,
         password: data.password,
       });
 
-      if (response.status === 409) {
+      if (response.status === 409) 
+      {
         setError("email", { message: response.data.error });
         return;
       }
 
-      if (response.status !== 201) {
+      if (response.status !== 201) 
+      {
         throw new Error(response.data.error || "Failed to create user");
       }
 
       router.push("/auth/signin");
       router.refresh();
-    } catch (error) {
+    } 
+    catch (error) 
+    {
       console.error(error);
       setServerError("Qeydiyyat zamanı xəta baş verdi. Yenidən cəhd edin.");
     }
   };
 
   return (
-    <form
-      className={cn("flex flex-col gap-2", className)}
-      {...props}
-      onSubmit={handleSubmit(onSubmit)}
-    >
+    <form className={cn("flex flex-col gap-2", className)} {...props} onSubmit={handleSubmit(onSubmit)}>
       <FieldGroup className="gap-5">
         <div className="flex flex-col gap-1">
           <h1 className="text-3xl font-extrabold text-white">
@@ -96,7 +108,6 @@ export function SignupForm({
             Fill in your details below to join us.
           </p>
         </div>
-
         <Field>
           <FieldLabel htmlFor="name">Full Name</FieldLabel>
           <Input
@@ -104,11 +115,10 @@ export function SignupForm({
             variant="auth"
             type="text"
             placeholder="John Doe"
-            {...register("name")}
-          />
+            {...register("name")}/>
+            
           {errors.name && <FieldError>{errors.name.message}</FieldError>}
         </Field>
-
         <Field>
           <FieldLabel htmlFor="email">Email</FieldLabel>
           <Input
@@ -116,11 +126,9 @@ export function SignupForm({
             variant="auth"
             type="email"
             placeholder="name@gmail.com"
-            {...register("email")}
-          />
+            {...register("email")}/>
           {errors.email && <FieldError>{errors.email.message}</FieldError>}
         </Field>
-
         <Field>
           <FieldLabel htmlFor="password">Password</FieldLabel>
           <Input
@@ -128,16 +136,16 @@ export function SignupForm({
             variant="auth"
             type="password"
             placeholder="••••••••"
-            {...register("password")}
-          />
-          {errors.password && (
+            {...register("password")}/>
+
+          {errors.password && 
+          (
             <FieldError>{errors.password.message}</FieldError>
           )}
           <FieldDescription className="text-gray-400">
             Must be at least 8 characters long.
           </FieldDescription>
         </Field>
-
         <Field>
           <FieldLabel htmlFor="confirm-password">Confirm Password</FieldLabel>
           <Input
@@ -145,45 +153,36 @@ export function SignupForm({
             variant="auth"
             type="password"
             placeholder="••••••••"
-            {...register("confirmPassword")}
-          />
-          {errors.confirmPassword && (
+            {...register("confirmPassword")}/>
+
+          {errors.confirmPassword && 
+          (
             <FieldError>{errors.confirmPassword.message}</FieldError>
           )}
         </Field>
-
         {serverError && <FieldError>{serverError}</FieldError>}
-
         <Field>
           <button
             type="submit"
             disabled={isSubmitting}
-            className="w-full rounded-lg bg-yellow-400 py-3 text-sm font-bold text-gray-900 transition-colors hover:bg-yellow-500 disabled:opacity-60"
-          >
+            className="w-full rounded-lg bg-yellow-400 py-3 text-sm font-bold text-gray-900 transition-colors hover:bg-yellow-500 disabled:opacity-60">
             {isSubmitting ? "Creating account..." : "SIGN UP"}
           </button>
         </Field>
-
         <span className="text-sm text-gray-300 text-center">
           Or continue with
         </span>
-
         <Field>
           <button
             type="button"
             disabled={isSubmitting}
             onClick={handleSignupWithGoogle}
-            className="w-full rounded-lg bg-white py-3 text-sm font-bold text-gray-900 transition-colors hover:bg-gray-100 disabled:opacity-60"
-          >
+            className="w-full rounded-lg bg-white py-3 text-sm font-bold text-gray-900 transition-colors hover:bg-gray-100 disabled:opacity-60">
             Sign up with Google
           </button>
-
           <FieldDescription className="text-center text-gray-300">
             Already have an account?{" "}
-            <Link
-              href="/auth/signin"
-              className="font-semibold text-white underline-offset-4 hover:underline"
-            >
+            <Link href="/auth/signin" className="font-semibold text-white underline-offset-4 hover:underline">
               Sign in
             </Link>
           </FieldDescription>
