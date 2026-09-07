@@ -44,12 +44,12 @@ export function MenuDisplay({ onAddToCart }: { onAddToCart: (product: Product, q
 
   if (loading) 
   {
-    return <div className="text-center text-white py-8">Yüklənir...</div>;
+    return <div className="text-center text-white py-8">Loading...</div>;
   }
 
   if (products.length === 0) 
   {
-    return <div className="text-center text-gray-300 py-8">Heç bir məhsul tapılmadı</div>;
+    return <div className="text-center text-gray-300 py-8">No products found.</div>;
   }
 
   return (
@@ -69,7 +69,7 @@ export function MenuDisplay({ onAddToCart }: { onAddToCart: (product: Product, q
           ) : 
           (
             <div className="h-48 bg-gray-700 flex items-center justify-center">
-              <span className="text-gray-400">Şəkil yoxdur</span>
+              <span className="text-gray-400">No image</span>
             </div>
           )}
           <div className="p-4">
@@ -81,7 +81,7 @@ export function MenuDisplay({ onAddToCart }: { onAddToCart: (product: Product, q
             <div className="flex justify-between items-center mb-4">
               <span className="text-xl font-bold text-yellow-400">₼{product.price.toFixed(2)}</span>
               <span className={`text-sm font-semibold ${product.stock > 0 ? "text-green-400" : "text-red-400"}`}>
-                {product.stock > 0 ? `${product.stock} there is` : "There is none"}
+                {product.stock > 0 ? `${product.stock} there are` : "There is none"}
               </span>
             </div>
             <div className="flex gap-2">
@@ -105,7 +105,7 @@ export function MenuDisplay({ onAddToCart }: { onAddToCart: (product: Product, q
                 onClick={() => onAddToCart(product, quantities[product.id] || 1)}
                 disabled={product.stock === 0}
                 className="flex-1 bg-yellow-400 hover:bg-yellow-500 disabled:opacity-60 text-gray-900 font-bold py-2 rounded">
-                Add to cart
+                Add
               </button>
             </div>
           </div>

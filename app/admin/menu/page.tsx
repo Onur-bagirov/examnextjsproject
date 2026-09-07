@@ -198,7 +198,7 @@ export default function MenuPage() {
                                                         {item.name}
                                                     </h3>
                                                     <p className="text-xs text-gray-600">
-                                                        {item.stock > 0 ? `${item.stock} ədəd stokda` : "Stokda yoxdur"}
+                                                        {item.stock > 0 ? `${item.stock} units in stock` : "Out of stock"}
                                                     </p>
                                                 </div>
                                                 <span className="text-xl font-bold text-gray-900">

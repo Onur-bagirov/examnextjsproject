@@ -90,8 +90,9 @@ export default function Menu() {
           <div>
             <CartView
               key={cartKey}
-              onCheckout={() => {
-                setFeedback("Sifariş uğurla tamamlandı");
+              onCheckout={() => 
+              {
+                setFeedback("The order was successfully completed.");
                 setMenuKey((prev) => prev + 1);
               }}
             />

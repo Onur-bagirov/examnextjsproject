@@ -20,7 +20,8 @@ export async function GET() {
 
     const bookings = await prisma.booking.findMany({
       orderBy: { createdAt: "desc" },
-      include: {
+      include: 
+      {
         user: 
         {
           select: { id: true, name: true, email: true },
@@ -41,44 +42,54 @@ export async function GET() {
   }
 }
 
-// POST - Yeni rezervasiya yaratdır (giriş etmiş və ya qonaq istifadəçi)
 export async function POST(request: NextRequest) {
-  try {
+  try 
+  {
     const session = await getServerSession(authOptions);
     const body = await request.json();
 
     const { name, email, phone, guests, date, time, message } = body;
 
-    if (!guests || !date || !time) {
-      return NextResponse.json(
+    if (!guests || !date || !time) 
+    {
+      return NextResponse.json
+      (
         { error: "Missing required fields" },
         { status: 400 }
       );
     }
 
     const guestsNumber = parseInt(guests, 10);
-    if (Number.isNaN(guestsNumber) || guestsNumber < 1) {
-      return NextResponse.json(
+
+    if (Number.isNaN(guestsNumber) || guestsNumber < 1)
+    {
+      return NextResponse.json
+      (
         { error: "Invalid guest count" },
         { status: 400 }
       );
     }
 
     const bookingDate = new Date(date);
-    if (Number.isNaN(bookingDate.getTime())) {
+
+    if (Number.isNaN(bookingDate.getTime())) 
+    {
       return NextResponse.json({ error: "Invalid date" }, { status: 400 });
     }
 
-    // Giriş etməyən istifadəçi üçün ad tələb olunur
-    if (!session?.user?.id && !name) {
-      return NextResponse.json(
+    if (!session?.user?.id && !name) 
+    {
+      return NextResponse.json
+      (
         { error: "Name is required" },
         { status: 400 }
       );
     }
 
-    const booking = await prisma.booking.create({
-      data: {
+    const booking = await prisma.booking.create(
+    {
+      data: 
+      {
         userId: session?.user?.id || null,
         name: name || session?.user?.name || "Guest",
         email: email || session?.user?.email || null,
@@ -92,9 +103,13 @@ export async function POST(request: NextRequest) {
     });
 
     return NextResponse.json(booking, { status: 201 });
-  } catch (error) {
+  } 
+  catch (error) 
+  {
     console.error("Booking creation error:", error);
-    return NextResponse.json(
+
+    return NextResponse.json
+    (
       { error: "Failed to create booking" },
       { status: 500 }
     );

@@ -49,7 +49,8 @@ export function CartView({ onCheckout }: { onCheckout: () => void }) {
     }
   };
 
-  const removeItem = async (cartItemId: string) => {
+  const removeItem = async (cartItemId: string) => 
+  {
     try 
     {
       await fetch("/api/cart", 
@@ -138,7 +139,7 @@ export function CartView({ onCheckout }: { onCheckout: () => void }) {
             <div className="flex-1">
               <h3 className="font-bold text-white">{item.product.name}</h3>
               <p className="text-yellow-400">₼{item.product.price.toFixed(2)}</p>
-              <p className="text-gray-300 text-sm">Miqdar: {item.quantity}</p>
+              <p className="text-gray-300 text-sm">Quantity: {item.quantity}</p>
             </div>
             <div className="text-right">
               <p className="text-white font-bold">₼{(item.product.price * item.quantity).toFixed(2)}</p>
