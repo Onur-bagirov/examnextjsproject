@@ -75,7 +75,7 @@ export async function POST(request: NextRequest) {
     {
       return NextResponse.json(
         {
-          error: `You do not have sufficient funds in your balance. What is needed: ₼${totalPrice.toFixed(2)}, mövcud: ₼${user.balance.toFixed(2)}`,
+          error: `You do not have sufficient funds in your balance. What is needed: ₼${totalPrice.toFixed(2)}, existing: ₼${user.balance.toFixed(2)}`,
         },
         { status: 400 }
       );

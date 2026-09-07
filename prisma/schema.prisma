@@ -1,16 +1,13 @@
-generator client 
-{
+generator client {
   provider = "prisma-client-js"
 }
 
-datasource db 
-{
+datasource db {
   provider = "sqlite"
   url      = env("DATABASE_URL")
 }
 
-model User 
-{
+model User {
   id        String   @id @default(cuid())
   name      String?
   email     String   @unique
@@ -28,8 +25,7 @@ model User
   @@map("users")
 }
 
-model Product 
-{
+model Product {
   id          String   @id @default(cuid())
   name        String
   description String?
@@ -45,8 +41,7 @@ model Product
   @@map("products")
 }
 
-model Cart 
-{
+model Cart {
   id        String     @id @default(cuid())
   userId    String     @unique
   user      User       @relation(fields: [userId], references: [id], onDelete: Cascade)
@@ -57,8 +52,7 @@ model Cart
   @@map("carts")
 }
 
-model CartItem 
-{
+model CartItem {
   id        String   @id @default(cuid())
   cartId    String
   cart      Cart     @relation(fields: [cartId], references: [id], onDelete: Cascade)
@@ -72,8 +66,7 @@ model CartItem
   @@map("cart_items")
 }
 
-model Order 
-{
+model Order {
   id         String      @id @default(cuid())
   userId     String
   user       User        @relation(fields: [userId], references: [id], onDelete: Cascade)
@@ -86,8 +79,7 @@ model Order
   @@map("orders")
 }
 
-model Booking 
-{
+model Booking {
   id        String   @id @default(cuid())
   userId    String?
   user      User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
@@ -105,8 +97,7 @@ model Booking
   @@map("bookings")
 }
 
-model OrderItem 
-{
+model OrderItem {
   id        String  @id @default(cuid())
   orderId   String
   order     Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
