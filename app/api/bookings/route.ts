@@ -13,15 +13,39 @@ export async function GET() {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    if (session.user.role !== "ADMIN") 
+    let userRole = session.user?.role;
+    console.log("Bookings API - User Role from session:", userRole, "User ID:", session.user.id);
+
+    if (!userRole) 
     {
-      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+      const dbUser = await prisma.user.findUnique({
+        where: { id: session.user.id },
+        select: { role: true }
+      });
+      userRole = dbUser?.role;
+      console.log("Bookings API - User Role from DB:", userRole);
+    }
+
+    if (userRole !== "ADMIN") 
+    {
+      console.log("Access denied - Role is:", userRole);
+      return NextResponse.json({ error: "Forbidden - Admin access required" }, { status: 403 });
     }
 
     const bookings = await prisma.booking.findMany({
       orderBy: { createdAt: "desc" },
-      include: 
+      select: 
       {
+        id: true,
+        name: true,
+        email: true,
+        phone: true,
+        guests: true,
+        date: true,
+        time: true,
+        message: true,
+        status: true,
+        createdAt: true,
         user: 
         {
           select: { id: true, name: true, email: true },

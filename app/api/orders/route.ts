@@ -13,23 +13,44 @@ export async function GET() {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    if (session.user.role !== "ADMIN") 
+    let userRole = session.user?.role;
+    console.log("Orders API - User Role from session:", userRole, "User ID:", session.user.id);
+
+    if (!userRole) 
     {
-      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+      const dbUser = await prisma.user.findUnique({
+        where: { id: session.user.id },
+        select: { role: true }
+      });
+      userRole = dbUser?.role;
+      console.log("Orders API - User Role from DB:", userRole);
+    }
+
+    if (userRole !== "ADMIN") 
+    {
+      console.log("Access denied - Role is:", userRole);
+      return NextResponse.json({ error: "Forbidden - Admin access required" }, { status: 403 });
     }
 
     const orders = await prisma.order.findMany({
       orderBy: { createdAt: "desc" },
-      include: 
+      select: 
       {
+        id: true,
+        totalPrice: true,
+        status: true,
+        createdAt: true,
         user: 
         {
           select: { id: true, name: true, email: true },
         },
         items: 
         {
-          include: 
+          select: 
           {
+            id: true,
+            quantity: true,
+            price: true,
             product: 
             {
               select: { id: true, name: true },
