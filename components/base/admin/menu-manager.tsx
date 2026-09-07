@@ -1,14 +1,30 @@
+"use client";
+
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { UtensilsCrossed, ArrowRight } from "lucide-react";
 
-const categorySummary = [
-    { category: "Burgers", items: 2, color: "bg-orange-400" },
-    { category: "Sides", items: 1, color: "bg-yellow-400" },
-    { category: "Drinks", items: 2, color: "bg-blue-400" },
-];
-
 export default function MenuManager() {
-    const totalItems = categorySummary.reduce((sum, item) => sum + item.items, 0);
+    const [totalItems, setTotalItems] = useState<number | null>(null);
+    const [inStock, setInStock] = useState<number>(0);
+    const [outOfStock, setOutOfStock] = useState<number>(0);
+
+    useEffect(() => {
+        const fetchSummary = async () => {
+            try {
+                const response = await fetch("/api/products");
+                const data = await response.json();
+                setTotalItems(data.length);
+                setInStock(data.filter((p: { stock: number }) => p.stock > 0).length);
+                setOutOfStock(data.filter((p: { stock: number }) => p.stock === 0).length);
+            } catch (error) {
+                console.error("Failed to fetch menu summary", error);
+                setTotalItems(0);
+            }
+        };
+
+        fetchSummary();
+    }, []);
 
     return (
         <div className="rounded-2xl border border-white/40 bg-white/50 backdrop-blur-sm p-6">
@@ -23,19 +39,23 @@ export default function MenuManager() {
                 </Link>
             </div>
             <p className="text-sm text-gray-600 mb-4">
-                {totalItems} items across {categorySummary.length} categories
+                {totalItems === null ? "Yüklənir..." : `${totalItems} məhsul menyuda`}
             </p>
-            <div className="grid gap-3 sm:grid-cols-3">
-                {categorySummary.map((cat) => 
-                (
-                    <div key={cat.category} className="flex items-center gap-3 p-4 bg-white/30 rounded-xl">
-                        <span className={`w-2.5 h-2.5 rounded-full ${cat.color} shrink-0`}></span>
-                        <div>
-                            <p className="text-sm font-semibold text-gray-900">{cat.category}</p>
-                            <p className="text-xs text-gray-600">{cat.items} items</p>
-                        </div>
+            <div className="grid gap-3 sm:grid-cols-2">
+                <div className="flex items-center gap-3 p-4 bg-white/30 rounded-xl">
+                    <span className="w-2.5 h-2.5 rounded-full bg-green-400 shrink-0"></span>
+                    <div>
+                        <p className="text-sm font-semibold text-gray-900">Stokda var</p>
+                        <p className="text-xs text-gray-600">{inStock} məhsul</p>
                     </div>
-                ))}
+                </div>
+                <div className="flex items-center gap-3 p-4 bg-white/30 rounded-xl">
+                    <span className="w-2.5 h-2.5 rounded-full bg-red-400 shrink-0"></span>
+                    <div>
+                        <p className="text-sm font-semibold text-gray-900">Stokda yoxdur</p>
+                        <p className="text-xs text-gray-600">{outOfStock} məhsul</p>
+                    </div>
+                </div>
             </div>
         </div>
     );

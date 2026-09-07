@@ -30,11 +30,7 @@ export function CartView({ onCheckout }: { onCheckout: () => void }) {
 
   const fetchCart = async () => {
     try {
-      const response = await fetch("/api/cart", {
-        headers: {
-          "x-user-id": "user-id",
-        },
-      });
+      const response = await fetch("/api/cart");
       const data = await response.json();
       setCart(data);
     } catch (error) {
@@ -49,7 +45,6 @@ export function CartView({ onCheckout }: { onCheckout: () => void }) {
       await fetch("/api/cart", {
         method: "DELETE",
         headers: {
-          "x-user-id": "user-id",
           "Content-Type": "application/json",
         },
         body: JSON.stringify({ cartItemId }),
@@ -65,10 +60,6 @@ export function CartView({ onCheckout }: { onCheckout: () => void }) {
     try {
       const response = await fetch("/api/orders/checkout", {
         method: "POST",
-        headers: {
-          "x-user-id": "user-id",
-          "Content-Type": "application/json",
-        },
       });
 
       if (!response.ok) {
@@ -92,7 +83,7 @@ export function CartView({ onCheckout }: { onCheckout: () => void }) {
     return <div className="text-center text-white py-8">Yüklənir...</div>;
   }
 
-  if (!cart || cart.items.length === 0) {
+  if (!cart || !cart.items || cart.items.length === 0) {
     return (
       <div className="bg-gray-800 rounded-lg p-8 text-center">
         <p className="text-gray-300 mb-4">Səbət boşdur</p>

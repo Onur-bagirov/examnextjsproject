@@ -8,8 +8,12 @@ import { z } from "zod";
 const productSchema = z.object({
   name: z.string().min(2, "Ad ən azı 2 simvol olmalıdır"),
   description: z.string().optional(),
-  price: z.string().transform(Number).pipe(z.number().positive("Qiymət müsbət olmalıdır")),
-  stock: z.string().transform(Number).pipe(z.number().int().nonnegative("Stock 0 və ya daha çox olmalıdır")),
+  price: z
+    .string()
+    .refine((v) => Number(v) > 0, "Qiymət müsbət olmalıdır"),
+  stock: z
+    .string()
+    .refine((v) => Number.isInteger(Number(v)) && Number(v) >= 0, "Stock 0 və ya daha çox olmalıdır"),
 });
 
 type ProductFormData = z.infer<typeof productSchema>;
@@ -38,8 +42,8 @@ export function ProductForm({ onSuccess }: { onSuccess?: () => void }) {
       const formData = new FormData();
       formData.append("name", data.name);
       formData.append("description", data.description || "");
-      formData.append("price", data.price.toString());
-      formData.append("stock", data.stock.toString());
+      formData.append("price", data.price);
+      formData.append("stock", data.stock);
       
       if (image) {
         formData.append("image", image);

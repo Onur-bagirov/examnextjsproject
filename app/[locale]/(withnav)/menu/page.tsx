@@ -1,109 +1,87 @@
-import Image from "next/image";
+"use client";
 
-const burgers = [
-    {
-        id: 1,
-        name: "Chicken Burger",
-        description: "Lorem Ipsum is simply dummy text of the printing industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s",
-        price: 4.5,
-        oldPrice: 5.5,
-        image: "/Image/MenuBurger1.png",
-    },
-    {
-        id: 2,
-        name: "Floating Burger",
-        description: "Lorem Ipsum is simply dummy text of the printing industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s",
-        price: 5.0,
-        oldPrice: 6.5,
-        image: "/Image/MenuBurger2.png",
-    },
-    {
-        id: 3,
-        name: "Fritz Burger",
-        description: "Lorem Ipsum is simply dummy text of the printing industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s",
-        price: 3.5,
-        oldPrice: 5.5,
-        image: "/Image/MenuBurger3.png",
-    },
-    {
-        id: 4,
-        name: "Pampa Burger",
-        description: "Lorem Ipsum is simply dummy text of the printing industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s",
-        price: 4.5,
-        oldPrice: 5.5,
-        image: "/Image/Burger4.png",
-    },
-    {
-        id: 5,
-        name: "Piratni Burger",
-        description: "Lorem Ipsum is simply dummy text of the printing industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s",
-        price: 4.5,
-        oldPrice: 5.5,
-        image: "/Image/MenuBurger5.png",
-    },
-    {
-        id: 6,
-        name: "La Plata Burger",
-        description: "Lorem Ipsum is simply dummy text of the printing industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s",
-        price: 4.5,
-        oldPrice: 5.5,
-        image: "/Image/MenuBurger6.png",
-    },
-];
+import { useState } from "react";
+import { useSession } from "next-auth/react";
+import Link from "next/link";
+import { MenuDisplay } from "@/components/menu/menu-display";
+import { CartView } from "@/components/cart/cart-view";
+
+interface Product {
+  id: string;
+  name: string;
+  description: string | null;
+  price: number;
+  stock: number;
+  image: string | null;
+}
 
 export default function Menu() {
-    return (
-        <div className="py-20 px-8 bg-gray-100">
-            <div className="max-w-6xl mx-auto">
-                <h1 className="text-center text-4xl font-extrabold mb-4">
-                    <span className="text-gray-900">Favorite</span>{" "}
-                    <span className="text-yellow-500">Menu</span>
-                </h1>
-                <p className="text-center text-lg font-semibold text-gray-900 mb-12">
-                    you can select your range-able burger
-                </p>
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {burgers.map((burger) => 
-                    (
-                        <div key={burger.id} className="bg-gray-100 rounded-xl overflow-hidden shadow-sm">
-                            <div className="relative w-full h-52">
-                                <Image
-                                    src={burger.image}
-                                    alt={burger.name}
-                                    fill
-                                    sizes="(max-width: 768px) 100vw, 33vw"
-                                    className="object-cover"/>
-                            </div>
-                            <div className="p-5">
-                                <h3 className="text-lg font-bold text-gray-900 mb-2">
-                                    {burger.name}
-                                </h3>
-                                <p className="text-sm text-gray-600 leading-relaxed mb-4">
-                                    {burger.description}
-                                </p>
-                                <div className="flex items-center justify-between">
-                                    <div className="flex items-center gap-2">
-                                        <span className="text-red-600 font-bold">
-                                            $ {burger.price.toFixed(2)}
-                                        </span>
-                                        <span className="text-gray-400 line-through text-sm">
-                                            $ {burger.oldPrice.toFixed(2)}
-                                        </span>
-                                    </div>
-                                    <button className="bg-red-600 hover:bg-red-700 text-white text-sm font-semibold px-4 py-2 rounded-md">
-                                        Buy Now
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    ))}
-                </div>
-                <div className="flex justify-center mt-12">
-                    <button className="border border-yellow-500 text-gray-900 font-bold px-6 py-3 rounded-lg hover:bg-yellow-50">
-                        Explore Menu
-                    </button>
-                </div>
-            </div>
+  const { status } = useSession();
+  const isAuthenticated = status === "authenticated";
+  const [cartKey, setCartKey] = useState(0);
+  const [feedback, setFeedback] = useState<string | null>(null);
+
+  const handleAddToCart = async (product: Product, quantity: number) => {
+    if (!isAuthenticated) {
+      setFeedback("Səbətə əlavə etmək üçün əvvəlcə daxil olun");
+      return;
+    }
+
+    try {
+      const response = await fetch("/api/cart", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ productId: product.id, quantity }),
+      });
+
+      if (!response.ok) {
+        const error = await response.json();
+        setFeedback(error.error || "Səbətə əlavə edilə bilmədi");
+        return;
+      }
+
+      setFeedback(`${product.name} səbətə əlavə edildi`);
+      // Cart komponentini yeniləmək üçün yenidən render etdiririk
+      setCartKey((prev) => prev + 1);
+    } catch (error) {
+      console.error("Failed to add to cart", error);
+      setFeedback("Səbətə əlavə edilərkən xəta baş verdi");
+    }
+  };
+
+  return (
+    <div className="py-20 px-8 bg-gray-900 min-h-screen">
+      <div className="max-w-6xl mx-auto">
+        <h1 className="text-center text-4xl font-extrabold mb-4">
+          <span className="text-white">Favorite</span>{" "}
+          <span className="text-yellow-500">Menu</span>
+        </h1>
+        <p className="text-center text-lg font-semibold text-gray-300 mb-4">
+          Sevdiyin burgeri seç və səbətə əlavə et
+        </p>
+
+        {!isAuthenticated && (
+          <p className="text-center text-sm text-yellow-400 mb-8">
+            Sifariş vermək üçün{" "}
+            <Link href="/auth/signin" className="underline font-semibold">
+              daxil olmalısınız
+            </Link>
+          </p>
+        )}
+
+        {feedback && (
+          <p className="text-center text-sm text-green-400 mb-8">{feedback}</p>
+        )}
+
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
+          <div className="lg:col-span-2">
+            <MenuDisplay onAddToCart={handleAddToCart} />
+          </div>
+          <div>
+            <CartView key={cartKey} onCheckout={() => setFeedback("Sifariş uğurla tamamlandı")} />
+          </div>
         </div>
-    );
+      </div>
+    </div>
+  );
 }

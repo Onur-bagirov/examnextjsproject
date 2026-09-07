@@ -1,47 +1,86 @@
 "use client";
 
-import { useState } from "react";
-import { Plus, Edit2, Trash2 } from "lucide-react";
+import { useEffect, useState } from "react";
+import { Plus, Edit2, Trash2, X } from "lucide-react";
+import { ProductForm } from "@/components/base/admin/product-form";
+
+interface Product {
+    id: string;
+    name: string;
+    description: string | null;
+    price: number;
+    stock: number;
+    image: string | null;
+}
 
 export default function MenuPage() {
-    const [menuItems, setMenuItems] = useState(
-    [
-        {
-            id: 1,
-            name: "Classic Burger",
-            category: "Burgers",
-            price: 6.99,
-            description: "Juicy beef patty with lettuce and tomato",
-        },
-        {
-            id: 2,
-            name: "Cheese Burger",
-            category: "Burgers",
-            price: 7.99,
-            description: "Classic burger with melted cheese",
-        },
-        {
-            id: 3,
-            name: "Fries",
-            category: "Sides",
-            price: 2.99,
-            description: "Crispy golden fries",
-        },
-        {
-            id: 4,
-            name: "Soda",
-            category: "Drinks",
-            price: 1.99,
-            description: "Cold refreshing soda",
-        },
-        {
-            id: 5,
-            name: "Milkshake",
-            category: "Drinks",
-            price: 3.99,
-            description: "Creamy delicious milkshake",
-        },
-    ]);
+    const [products, setProducts] = useState<Product[]>([]);
+    const [loading, setLoading] = useState(true);
+    const [showForm, setShowForm] = useState(false);
+    const [editingId, setEditingId] = useState<string | null>(null);
+    const [editValues, setEditValues] = useState({ name: "", price: "", stock: "" });
+
+    const fetchProducts = async () => {
+        try {
+            const response = await fetch("/api/products");
+            const data = await response.json();
+            setProducts(data);
+        } catch (error) {
+            console.error("Failed to fetch products", error);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    useEffect(() => {
+        fetchProducts();
+    }, []);
+
+    const handleDelete = async (id: string) => {
+        if (!confirm("Bu burgeri silmək istədiyinizə əminsiniz?")) return;
+
+        try {
+            await fetch(`/api/products/${id}`, { method: "DELETE" });
+            setProducts((prev) => prev.filter((p) => p.id !== id));
+        } catch (error) {
+            console.error("Failed to delete product", error);
+        }
+    };
+
+    const startEdit = (product: Product) => {
+        setEditingId(product.id);
+        setEditValues({
+            name: product.name,
+            price: product.price.toString(),
+            stock: product.stock.toString(),
+        });
+    };
+
+    const cancelEdit = () => {
+        setEditingId(null);
+    };
+
+    const saveEdit = async (id: string) => {
+        try {
+            const response = await fetch(`/api/products/${id}`, {
+                method: "PATCH",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    name: editValues.name,
+                    price: editValues.price,
+                    stock: editValues.stock,
+                }),
+            });
+
+            if (!response.ok) return;
+
+            const updated = await response.json();
+            setProducts((prev) => prev.map((p) => (p.id === id ? updated : p)));
+            setEditingId(null);
+        } catch (error) {
+            console.error("Failed to update product", error);
+        }
+    };
 
     return (
         <div className="space-y-6">
@@ -54,48 +93,116 @@ export default function MenuPage() {
                         Manage your restaurant menu items
                     </p>
                 </div>
-                <button className="flex items-center gap-2 bg-yellow-400 text-gray-900 font-bold px-4 py-2 rounded-lg hover:bg-yellow-500 transition-colors">
-                    <Plus className="size-4"/>
-                    Add Item
+                <button
+                    onClick={() => setShowForm((v) => !v)}
+                    className="flex items-center gap-2 bg-yellow-400 text-gray-900 font-bold px-4 py-2 rounded-lg hover:bg-yellow-500 transition-colors"
+                >
+                    {showForm ? <X className="size-4" /> : <Plus className="size-4" />}
+                    {showForm ? "Bağla" : "Add Item"}
                 </button>
             </div>
-            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-                {menuItems.map((item) => 
-                (
-                    <div key={item.id} className="rounded-2xl border border-white/40 bg-white/50 backdrop-blur-sm p-6 hover:bg-white/60 transition-all">
-                        <div className="space-y-3">
-                            <div>
-                                <div className="flex items-start justify-between mb-2">
-                                    <div>
-                                        <h3 className="font-bold text-lg text-gray-900">
-                                            {item.name}
-                                        </h3>
-                                        <p className="text-xs text-gray-600">
-                                            {item.category}
-                                        </p>
+
+            {showForm && (
+                <ProductForm
+                    onSuccess={() => {
+                        setShowForm(false);
+                        fetchProducts();
+                    }}
+                />
+            )}
+
+            {loading ? (
+                <p className="text-gray-600">Yüklənir...</p>
+            ) : products.length === 0 ? (
+                <p className="text-gray-600">Heç bir məhsul tapılmadı</p>
+            ) : (
+                <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+                    {products.map((item) => (
+                        <div key={item.id} className="rounded-2xl border border-white/40 bg-white/50 backdrop-blur-sm p-6 hover:bg-white/60 transition-all">
+                            <div className="space-y-3">
+                                {editingId === item.id ? (
+                                    <div className="space-y-2">
+                                        <input
+                                            className="w-full border rounded px-2 py-1 text-sm"
+                                            value={editValues.name}
+                                            onChange={(e) => setEditValues({ ...editValues, name: e.target.value })}
+                                            placeholder="Ad"
+                                        />
+                                        <div className="flex gap-2">
+                                            <input
+                                                type="number"
+                                                step="0.01"
+                                                className="w-1/2 border rounded px-2 py-1 text-sm"
+                                                value={editValues.price}
+                                                onChange={(e) => setEditValues({ ...editValues, price: e.target.value })}
+                                                placeholder="Qiymət"
+                                            />
+                                            <input
+                                                type="number"
+                                                className="w-1/2 border rounded px-2 py-1 text-sm"
+                                                value={editValues.stock}
+                                                onChange={(e) => setEditValues({ ...editValues, stock: e.target.value })}
+                                                placeholder="Stock"
+                                            />
+                                        </div>
+                                        <div className="flex gap-2 pt-2">
+                                            <button
+                                                onClick={() => saveEdit(item.id)}
+                                                className="flex-1 bg-green-100 text-green-900 font-semibold px-3 py-2 rounded-lg hover:bg-green-200 transition-colors text-sm"
+                                            >
+                                                Yadda saxla
+                                            </button>
+                                            <button
+                                                onClick={cancelEdit}
+                                                className="flex-1 bg-gray-100 text-gray-900 font-semibold px-3 py-2 rounded-lg hover:bg-gray-200 transition-colors text-sm"
+                                            >
+                                                Ləğv et
+                                            </button>
+                                        </div>
                                     </div>
-                                    <span className="text-xl font-bold text-gray-900">
-                                        ${item.price.toFixed(2)}
-                                    </span>
-                                </div>
-                                <p className="text-sm text-gray-600">
-                                    {item.description}
-                                </p>
-                            </div>
-                            <div className="flex gap-2 pt-4 border-t border-white/30">
-                                <button className="flex-1 flex items-center justify-center gap-2 bg-blue-100 text-blue-900 font-semibold px-3 py-2 rounded-lg hover:bg-blue-200 transition-colors text-sm">
-                                    <Edit2 className="size-3.5" />
-                                    Edit
-                                </button>
-                                <button className="flex-1 flex items-center justify-center gap-2 bg-red-100 text-red-900 font-semibold px-3 py-2 rounded-lg hover:bg-red-200 transition-colors text-sm">
-                                    <Trash2 className="size-3.5" />
-                                    Delete
-                                </button>
+                                ) : (
+                                    <>
+                                        <div>
+                                            <div className="flex items-start justify-between mb-2">
+                                                <div>
+                                                    <h3 className="font-bold text-lg text-gray-900">
+                                                        {item.name}
+                                                    </h3>
+                                                    <p className="text-xs text-gray-600">
+                                                        {item.stock > 0 ? `${item.stock} ədəd stokda` : "Stokda yoxdur"}
+                                                    </p>
+                                                </div>
+                                                <span className="text-xl font-bold text-gray-900">
+                                                    ₼{item.price.toFixed(2)}
+                                                </span>
+                                            </div>
+                                            <p className="text-sm text-gray-600">
+                                                {item.description}
+                                            </p>
+                                        </div>
+                                        <div className="flex gap-2 pt-4 border-t border-white/30">
+                                            <button
+                                                onClick={() => startEdit(item)}
+                                                className="flex-1 flex items-center justify-center gap-2 bg-blue-100 text-blue-900 font-semibold px-3 py-2 rounded-lg hover:bg-blue-200 transition-colors text-sm"
+                                            >
+                                                <Edit2 className="size-3.5" />
+                                                Edit
+                                            </button>
+                                            <button
+                                                onClick={() => handleDelete(item.id)}
+                                                className="flex-1 flex items-center justify-center gap-2 bg-red-100 text-red-900 font-semibold px-3 py-2 rounded-lg hover:bg-red-200 transition-colors text-sm"
+                                            >
+                                                <Trash2 className="size-3.5" />
+                                                Delete
+                                            </button>
+                                        </div>
+                                    </>
+                                )}
                             </div>
                         </div>
-                    </div>
-                ))}
-            </div>
+                    ))}
+                </div>
+            )}
         </div>
     );
 }
