@@ -88,10 +88,8 @@ export default function BlogPage() {
                                                     <p className="text-xs text-yellow-400">🔥 {blog.category}</p>
                                                 </div>
                                             </div>
-
                                             <h3 className="text-lg font-semibold mb-4 line-clamp-2">{blog.title}</h3>
                                             <p className="text-sm text-gray-300 mb-6 line-clamp-3">{blog.description}</p>
-
                                             <button className="text-yellow-400 font-semibold text-sm hover:text-yellow-300 transition-colors">
                                                 Read More →
                                             </button>

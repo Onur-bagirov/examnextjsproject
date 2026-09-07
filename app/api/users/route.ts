@@ -3,23 +3,29 @@ import bcrypt from "bcryptjs";
 import { prisma } from "@/lib/db";
 
 export async function POST(request: NextRequest) {
-  try {
+  try 
+  {
     const body = await request.json();
     const { name, email, password } = body;
 
-    if (!name || !email || !password) {
-      return NextResponse.json(
+    if (!name || !email || !password) 
+    {
+      return NextResponse.json
+      (
         { error: "Missing required fields" },
         { status: 400 }
       );
     }
 
-    const existingUser = await prisma.user.findUnique({
+    const existingUser = await prisma.user.findUnique(
+    {
       where: { email },
     });
 
-    if (existingUser) {
-      return NextResponse.json(
+    if (existingUser) 
+    {
+      return NextResponse.json
+      (
         { error: "Email already registered" },
         { status: 409 }
       );
@@ -28,7 +34,8 @@ export async function POST(request: NextRequest) {
     const hashedPassword = await bcrypt.hash(password, 10);
 
     const user = await prisma.user.create({
-      data: {
+      data: 
+      {
         name,
         email,
         password: hashedPassword,
@@ -45,9 +52,13 @@ export async function POST(request: NextRequest) {
       },
       { status: 201 }
     );
-  } catch (error) {
+  } 
+  catch (error) 
+  {
     console.error("User creation error:", error);
-    return NextResponse.json(
+
+    return NextResponse.json
+    (
       { error: "Failed to create user" },
       { status: 500 }
     );
@@ -55,9 +66,12 @@ export async function POST(request: NextRequest) {
 }
 
 export async function GET() {
-  try {
-    const users = await prisma.user.findMany({
-      select: {
+  try 
+  {
+    const users = await prisma.user.findMany(
+    {
+      select: 
+      {
         id: true,
         name: true,
         email: true,
@@ -67,9 +81,13 @@ export async function GET() {
     });
 
     return NextResponse.json(users, { status: 200 });
-  } catch (error) {
+  } 
+  catch (error) 
+  {
     console.error("Failed to fetch users:", error);
-    return NextResponse.json(
+
+    return NextResponse.json
+    (
       { error: "Failed to fetch users" },
       { status: 500 }
     );

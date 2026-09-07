@@ -5,104 +5,123 @@ import { prisma } from "@/lib/db";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(request: NextRequest) {
-  try {
-    // İstifadəçini sessiyadan al
+  try 
+  {
     const session = await getServerSession(authOptions);
     const userId = session?.user?.id;
-    if (!userId) {
+
+    if (!userId) 
+    {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    // User-i al
-    const user = await prisma.user.findUnique({
+    const user = await prisma.user.findUnique(
+    {
       where: { id: userId },
     });
-    if (!user) {
+
+    if (!user) 
+    {
       return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
 
-    // Səbəti al
     const cart = await prisma.cart.findUnique({
       where: { userId },
-      include: {
-        items: {
+      include: 
+      {
+        items: 
+        {
           include: { product: true },
         },
       },
     });
 
-    if (!cart || cart.items.length === 0) {
+    if (!cart || cart.items.length === 0) 
+    {
       return NextResponse.json({ error: "Cart is empty" }, { status: 400 });
     }
 
-    // Cəmi qiymətini hesabla
     let totalPrice = 0;
     const orderItems = [];
 
-    for (const item of cart.items) {
+    for (const item of cart.items) 
+    {
       const itemPrice = item.product.price * item.quantity;
       totalPrice += itemPrice;
-      orderItems.push({
+
+      orderItems.push(
+      {
         productId: item.product.id,
         quantity: item.quantity,
         price: item.product.price,
       });
 
-      // Stock-dan çıxart
-      await prisma.product.update({
+      await prisma.product.update(
+      {
         where: { id: item.product.id },
-        data: {
-          stock: {
+        data: 
+        {
+          stock: 
+          {
             decrement: item.quantity,
           },
         },
       });
     }
 
-    // Balance kontrol
-    if (user.balance < totalPrice) {
-      return NextResponse.json(
+    if (user.balance < totalPrice) 
+    {
+      return NextResponse.json
+      (
         { error: "Insufficient balance" },
         { status: 400 }
       );
     }
 
-    // Order yaratdır
     const order = await prisma.order.create({
-      data: {
+      data: 
+      {
         userId,
         totalPrice,
         status: "COMPLETED",
-        items: {
+        items: 
+        {
           create: orderItems,
         },
       },
-      include: {
-        items: {
+      include: 
+      {
+        items: 
+        {
           include: { product: true },
         },
       },
     });
 
-    // User-in balansından çıxart
-    await prisma.user.update({
+    await prisma.user.update(
+    {
       where: { id: userId },
-      data: {
-        balance: {
+      data: 
+      {
+        balance: 
+        {
           decrement: totalPrice,
         },
       },
     });
 
-    // Səbəti boşalt
-    await prisma.cartItem.deleteMany({
+    await prisma.cartItem.deleteMany(
+    {
       where: { cartId: cart.id },
     });
 
     return NextResponse.json(order, { status: 201 });
-  } catch (error) {
+  } 
+  catch (error) 
+  {
     console.error(error);
-    return NextResponse.json(
+    return NextResponse.json
+    (
       { error: "Failed to process checkout" },
       { status: 500 }
     );

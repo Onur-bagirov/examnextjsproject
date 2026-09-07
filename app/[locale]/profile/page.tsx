@@ -99,7 +99,8 @@ export default function ProfilePage() {
         }
     };
 
-    if (status === "loading" || loading) {
+    if (status === "loading" || loading) 
+    {
         return (
             <div className="min-h-screen bg-gradient-to-b from-gray-900 to-black p-4 sm:p-8">
                 <div className="max-w-2xl mx-auto">

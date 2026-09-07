@@ -3,23 +3,29 @@ import bcrypt from "bcryptjs";
 import { prisma } from "@/lib/db";
 
 export async function POST(request: NextRequest) {
-  try {
+  try 
+  {
     const body = await request.json();
     const { email, password } = body;
 
-    if (!email || !password) {
-      return NextResponse.json(
+    if (!email || !password) 
+    {
+      return NextResponse.json
+      (
         { error: "Email and password are required" },
         { status: 400 }
       );
     }
 
-    const user = await prisma.user.findUnique({
+    const user = await prisma.user.findUnique(
+    {
       where: { email },
     });
 
-    if (!user || !user.password) {
-      return NextResponse.json(
+    if (!user || !user.password) 
+    {
+      return NextResponse.json
+      (
         { error: "Invalid credentials" },
         { status: 401 }
       );
@@ -27,13 +33,14 @@ export async function POST(request: NextRequest) {
 
     const passwordsMatch = await bcrypt.compare(password, user.password);
 
-    if (!passwordsMatch) {
-      return NextResponse.json(
+    if (!passwordsMatch) 
+    {
+      return NextResponse.json
+      (
         { error: "Invalid credentials" },
         { status: 401 }
       );
     }
-
     return NextResponse.json(
       {
         id: user.id,
@@ -43,7 +50,9 @@ export async function POST(request: NextRequest) {
       },
       { status: 200 }
     );
-  } catch (error) {
+  } 
+  catch (error) 
+  {
     console.error("Login error:", error);
     return NextResponse.json({ error: "Login failed" }, { status: 500 });
   }

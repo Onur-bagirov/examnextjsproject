@@ -1,7 +1,7 @@
 "use client";
 import Image from "next/image";
 import { useState } from "react";
-import { Grid3x3, Calendar, Clock, AlignLeft } from "lucide-react";
+import { Users, Calendar, Clock, AlignLeft, User, Mail, Phone } from "lucide-react";
 
 export default function BookingEvent() 
 {
@@ -87,7 +87,7 @@ export default function BookingEvent()
                                     placeholder="How many guest"
                                     className="bg-transparent text-white placeholder-gray-400 outline-none w-full text-sm"
                                     required/>
-                                <Grid3x3 className="text-gray-400" size={20} />
+                                <Users className="text-gray-400" size={20} />
                             </div>
                         </div>
                         <div>

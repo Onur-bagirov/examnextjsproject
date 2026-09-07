@@ -1,5 +1,4 @@
 "use client";
-
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { UtensilsCrossed, ArrowRight } from "lucide-react";
@@ -9,20 +8,24 @@ export default function MenuManager() {
     const [inStock, setInStock] = useState<number>(0);
     const [outOfStock, setOutOfStock] = useState<number>(0);
 
-    useEffect(() => {
-        const fetchSummary = async () => {
-            try {
+    useEffect(() => 
+    {
+        const fetchSummary = async () => 
+        {
+            try 
+            {
                 const response = await fetch("/api/products");
                 const data = await response.json();
                 setTotalItems(data.length);
                 setInStock(data.filter((p: { stock: number }) => p.stock > 0).length);
                 setOutOfStock(data.filter((p: { stock: number }) => p.stock === 0).length);
-            } catch (error) {
+            } 
+            catch (error) 
+            {
                 console.error("Failed to fetch menu summary", error);
                 setTotalItems(0);
             }
         };
-
         fetchSummary();
     }, []);
 
@@ -39,21 +42,21 @@ export default function MenuManager() {
                 </Link>
             </div>
             <p className="text-sm text-gray-600 mb-4">
-                {totalItems === null ? "Yüklənir..." : `${totalItems} məhsul menyuda`}
+                {totalItems === null ? "Loading..." : `${totalItems} Product on the menu`}
             </p>
             <div className="grid gap-3 sm:grid-cols-2">
                 <div className="flex items-center gap-3 p-4 bg-white/30 rounded-xl">
                     <span className="w-2.5 h-2.5 rounded-full bg-green-400 shrink-0"></span>
                     <div>
-                        <p className="text-sm font-semibold text-gray-900">Stokda var</p>
-                        <p className="text-xs text-gray-600">{inStock} məhsul</p>
+                        <p className="text-sm font-semibold text-gray-900">In stock</p>
+                        <p className="text-xs text-gray-600">{inStock} product</p>
                     </div>
                 </div>
                 <div className="flex items-center gap-3 p-4 bg-white/30 rounded-xl">
                     <span className="w-2.5 h-2.5 rounded-full bg-red-400 shrink-0"></span>
                     <div>
-                        <p className="text-sm font-semibold text-gray-900">Stokda yoxdur</p>
-                        <p className="text-xs text-gray-600">{outOfStock} məhsul</p>
+                        <p className="text-sm font-semibold text-gray-900">Out of stock</p>
+                        <p className="text-xs text-gray-600">{outOfStock} product</p>
                     </div>
                 </div>
             </div>

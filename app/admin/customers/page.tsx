@@ -1,27 +1,29 @@
-export default function CustomersPage() {
-    const customers = [
-        {
-            id: 1,
-            name: "John Doe",
-            email: "john@example.com",
-            orders: 12,
-            spent: "$156.50",
-        },
-        {
-            id: 2,
-            name: "Jane Smith",
-            email: "jane@example.com",
-            orders: 8,
-            spent: "$92.40",
-        },
-        {
-            id: 3,
-            name: "Mike Johnson",
-            email: "mike@example.com",
-            orders: 15,
-            spent: "$189.75",
-        },
-    ];
+import { prisma } from "@/lib/db";
+
+export default async function CustomersPage() {
+    const users = await prisma.user.findMany(
+    {
+        where: { role: "USER" },
+        include: { orders: true },
+        orderBy: { createdAt: "desc" },
+    });
+
+    const customers = users.map((user) => 
+    {
+        const ordersCount = user.orders.length;
+        const totalSpent = user.orders.reduce
+        (
+            (sum, order) => sum + order.totalPrice,
+            0
+        );
+        return {
+            id: user.id,
+            name: user.name || "—",
+            email: user.email,
+            orders: ordersCount,
+            spent: `₼${totalSpent.toFixed(2)}`,
+        };
+    });
 
     return (
         <div className="space-y-6">
@@ -53,25 +55,35 @@ export default function CustomersPage() {
                             </tr>
                         </thead>
                         <tbody>
-                            {customers.map((customer) => 
-                            (
-                                <tr
-                                    key={customer.id}
-                                    className="border-b border-white/20 hover:bg-white/30 transition-colors">
-                                    <td className="px-6 py-4 text-sm font-medium text-gray-900">
-                                        {customer.name}
-                                    </td>
-                                    <td className="px-6 py-4 text-sm text-gray-600">
-                                        {customer.email}
-                                    </td>
-                                    <td className="px-6 py-4 text-sm font-medium text-gray-900">
-                                        {customer.orders}
-                                    </td>
-                                    <td className="px-6 py-4 text-sm font-bold text-gray-900">
-                                        {customer.spent}
+                            {customers.length === 0 ? (
+                                <tr>
+                                    <td colSpan={4} className="px-6 py-8 text-center text-sm text-gray-600">
+                                       There are no customers yet.
                                     </td>
                                 </tr>
-                            ))}
+                            ) 
+                            : 
+                            (
+                                customers.map((customer) => 
+                                (
+                                    <tr
+                                        key={customer.id}
+                                        className="border-b border-white/20 hover:bg-white/30 transition-colors">
+                                        <td className="px-6 py-4 text-sm font-medium text-gray-900">
+                                            {customer.name}
+                                        </td>
+                                        <td className="px-6 py-4 text-sm text-gray-600">
+                                            {customer.email}
+                                        </td>
+                                        <td className="px-6 py-4 text-sm font-medium text-gray-900">
+                                            {customer.orders}
+                                        </td>
+                                        <td className="px-6 py-4 text-sm font-bold text-gray-900">
+                                            {customer.spent}
+                                        </td>
+                                    </tr>
+                                ))
+                            )}
                         </tbody>
                     </table>
                 </div>
