@@ -38,7 +38,7 @@ export default function BookingsPage() {
 
         try 
         {
-            const response = await fetch("/api/bookings");
+            const response = await fetch("/api/bookings", { cache: "no-store" });
 
             if (!response.ok) 
             {
@@ -62,6 +62,13 @@ export default function BookingsPage() {
     useEffect(() => 
     {
         fetchBookings();
+
+        const interval = setInterval(() => 
+        {
+            fetchBookings();
+        }, 5000);
+
+        return () => clearInterval(interval);
     }, []);
 
     const updateStatus = async (id: string, status: string) => {
@@ -112,7 +119,7 @@ export default function BookingsPage() {
                         Manage table &amp; event booking requests
                     </p>
                 </div>
-                <div className="flex gap-2">
+                <div className="flex gap-2 items-center">
                     {["ALL", "PENDING", "CONFIRMED", "CANCELLED"].map((s) => (
                         <button
                             key={s}
@@ -124,6 +131,11 @@ export default function BookingsPage() {
                             {s}
                         </button>
                     ))}
+                    <button
+                        onClick={fetchBookings}
+                        className="px-4 py-2 rounded-lg text-sm font-semibold bg-white/50 text-gray-700 hover:bg-white/70 transition-colors">
+                        Refresh
+                    </button>
                 </div>
             </div>
 

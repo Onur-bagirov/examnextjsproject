@@ -1,21 +1,112 @@
 "use client";
 import Image from "next/image";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useSession } from "next-auth/react";
 import { Users, Calendar, Clock, AlignLeft, User, Mail, Phone } from "lucide-react";
+
+interface Booking
+{
+    id: string;
+    guests: number;
+    date: string;
+    time: string;
+    message: string | null;
+    status: string;
+    createdAt: string;
+}
+
+const statusColors: Record<string, string> =
+{
+    PENDING: "bg-yellow-100 text-yellow-800",
+    CONFIRMED: "bg-green-100 text-green-800",
+    CANCELLED: "bg-red-100 text-red-800",
+};
 
 export default function BookingEvent() 
 {
+    const { status: sessionStatus } = useSession();
     const [guests, setGuests] = useState("");
     const [date, setDate] = useState("");
     const [time, setTime] = useState("");
     const [message, setMessage] = useState("");
     const [submitted, setSubmitted] = useState(false);
+    const [submitting, setSubmitting] = useState(false);
+    const [error, setError] = useState("");
 
-    const handleSubmit = (e: React.FormEvent) => 
+    const [myBookings, setMyBookings] = useState<Booking[]>([]);
+    const [loadingBookings, setLoadingBookings] = useState(false);
+
+    const fetchMyBookings = async () =>
+    {
+        setLoadingBookings(true);
+        try
+        {
+            const response = await fetch("/api/bookings/me");
+            if (!response.ok)
+            {
+                return;
+            }
+            const data = await response.json();
+            setMyBookings(data);
+        }
+        catch (err)
+        {
+            console.error("Failed to fetch bookings", err);
+        }
+        finally
+        {
+            setLoadingBookings(false);
+        }
+    };
+
+    useEffect(() =>
+    {
+        if (sessionStatus === "authenticated")
+        {
+            fetchMyBookings();
+        }
+    }, [sessionStatus]);
+
+    const handleSubmit = async (e: React.FormEvent) => 
     {
         e.preventDefault();
-        console.log({ guests, date, time, message });
-        setSubmitted(true);
+        setError("");
+        setSubmitting(true);
+        setSubmitted(false);
+
+        try
+        {
+            const response = await fetch("/api/bookings", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ guests, date, time, message }),
+            });
+
+            if (!response.ok)
+            {
+                const data = await response.json().catch(() => ({}));
+                throw new Error(data.error || "Failed to submit booking");
+            }
+
+            setSubmitted(true);
+            setGuests("");
+            setDate("");
+            setTime("");
+            setMessage("");
+
+            if (sessionStatus === "authenticated")
+            {
+                fetchMyBookings();
+            }
+        }
+        catch (err: any)
+        {
+            setError(err.message || "Failed to submit booking");
+        }
+        finally
+        {
+            setSubmitting(false);
+        }
     };
 
     return (
@@ -134,10 +225,19 @@ export default function BookingEvent()
                         </div>
                     </div>
                     <div className="flex justify-center">
-                        <button type="submit" className="bg-yellow-400 hover:bg-yellow-500 text-[#1B1B3A] font-bold px-10 py-3 rounded-md">
-                            Booking Confirm
+                        <button
+                            type="submit"
+                            disabled={submitting}
+                            className="bg-yellow-400 hover:bg-yellow-500 disabled:opacity-60 disabled:cursor-not-allowed text-[#1B1B3A] font-bold px-10 py-3 rounded-md">
+                            {submitting ? "Submitting..." : "Booking Confirm"}
                         </button>
                     </div>
+                    {error && 
+                    (
+                        <p className="text-center text-red-600 font-semibold mt-6">
+                            {error}
+                        </p>
+                    )}
                     {submitted && 
                     (
                         <p className="text-center text-green-600 font-semibold mt-6">
@@ -145,6 +245,70 @@ export default function BookingEvent()
                         </p>
                     )}
                 </form>
+
+                {sessionStatus === "authenticated" && 
+                (
+                    <div className="mt-20">
+                        <h2 className="text-center text-3xl font-extrabold text-[#1B1B3A] mb-8">
+                            My Bookings
+                        </h2>
+                        <div className="rounded-2xl border border-gray-200 overflow-hidden">
+                            <div className="overflow-x-auto">
+                                <table className="w-full">
+                                    <thead>
+                                        <tr className="bg-gray-900">
+                                            <th className="px-6 py-4 text-left text-sm font-semibold text-white">Date &amp; Time</th>
+                                            <th className="px-6 py-4 text-left text-sm font-semibold text-white">Guests</th>
+                                            <th className="px-6 py-4 text-left text-sm font-semibold text-white">Message</th>
+                                            <th className="px-6 py-4 text-left text-sm font-semibold text-white">Status</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {loadingBookings ? 
+                                        (
+                                            <tr>
+                                                <td colSpan={4} className="px-6 py-8 text-center text-sm text-gray-600">
+                                                    Loading...
+                                                </td>
+                                            </tr>
+                                        ) : 
+                                        myBookings.length === 0 ? 
+                                        (
+                                            <tr>
+                                                <td colSpan={4} className="px-6 py-8 text-center text-sm text-gray-600">
+                                                    You have no bookings yet
+                                                </td>
+                                            </tr>
+                                        ) : (
+                                            myBookings.map((b) => 
+                                            (
+                                                <tr key={b.id} className="border-b border-gray-100 hover:bg-gray-50 transition-colors">
+                                                    <td className="px-6 py-4 text-sm text-gray-700">
+                                                        <div>{new Date(b.date).toLocaleDateString()}</div>
+                                                        <div className="text-xs text-gray-500">{b.time}</div>
+                                                    </td>
+                                                    <td className="px-6 py-4 text-sm font-semibold text-gray-900">
+                                                        {b.guests}
+                                                    </td>
+                                                    <td className="px-6 py-4 text-sm text-gray-600 max-w-[240px] truncate" title={b.message || ""}>
+                                                        {b.message || "-"}
+                                                    </td>
+                                                    <td className="px-6 py-4 text-sm">
+                                                        <span
+                                                            className={`px-3 py-1 rounded-full text-xs font-semibold ${
+                                                                statusColors[b.status] || "bg-gray-100 text-gray-800"}`}>
+                                                            {b.status}
+                                                        </span>
+                                                    </td>
+                                                </tr>
+                                            ))
+                                        )}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                )}
             </div>
         </div>
     );
