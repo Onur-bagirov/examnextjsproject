@@ -2,14 +2,16 @@
 import Image from "next/image";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useState } from "react";
+import { useTranslations } from "next-intl";
 
 export default function BurgerHome() {
     const [currentSlide, setCurrentSlide] = useState(1);
+    const t = useTranslations("home");
 
     const burgers = [
-        { id: 1, name: "BURGER CHEESE", image: "/Image/Burger1.jpg" },
-        { id: 2, name: "BURGER CHICKEN", image: "/Image/Burger2.jpg" },
-        { id: 3, name: "BURGER BIG MAC", image: "/Image/Burger3.jpg" },
+        { id: 1, name: t("cheeseBurger"), image: "/Image/Burger1.jpg" },
+        { id: 2, name: t("chickenBurger"), image: "/Image/Burger2.jpg" },
+        { id: 3, name: t("bigMac"), image: "/Image/Burger3.jpg" },
     ];
 
     const nextSlide = () => 
@@ -27,13 +29,13 @@ export default function BurgerHome() {
             <div className="grid grid-cols-2 min-h-[calc(100vh-88px)] rounded-2xl overflow-hidden">
                 <div className="flex flex-col justify-center px-12 py-12 bg-gray-100 relative">
                     <h1 className="text-6xl font-bold text-gray-900 mb-4">
-                        SAVOR THE <span className="text-yellow-500">FLAVOR</span>
+                        {t("title")} <span className="text-yellow-500">{t("highlight")}</span>
                     </h1>
                     <h2 className="text-5xl font-bold text-gray-900 mb-8">
-                        WITH A LITTLE BITE
+                        {t("subtitle")}
                     </h2>
                     <p className="text-gray-600 text-lg leading-relaxed mb-12 max-w-md">
-                        Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry&apos;s standard dummy text ever since the 1500s
+                        {t("description")}
                     </p>
                     <div className="flex items-center gap-4">
                         <button onClick={prevSlide} className="bg-yellow-400 rounded-full p-2 hover:bg-yellow-500 shrink-0">
@@ -59,7 +61,6 @@ export default function BurgerHome() {
                                 </div>
                             ))}
                         </div>
-
                         <button onClick={nextSlide} className="bg-yellow-400 rounded-full p-2 hover:bg-yellow-500 shrink-0">
                             <ChevronRight size={20} className="text-black" />
                         </button>
