@@ -11,6 +11,8 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { SignupFormSchema, signupFormSchema } from "./signup-form.schema";
 import { api } from "@/shared/api-instace";
+import { useTranslations } from "next-intl";
+import { usePathname } from "next/navigation";
 
 export function SignupForm(
 {
@@ -20,6 +22,9 @@ export function SignupForm(
 React.ComponentProps<"form">) 
 {
   const router = useRouter();
+  const pathname = usePathname();
+  const currentLocale = pathname.split("/")[1] || "en";
+  const t = useTranslations("auth.signup");
   const [serverError, setServerError] = useState<string | null>(null);
 
   const 
@@ -60,7 +65,7 @@ React.ComponentProps<"form">)
     catch (error) 
     {
       console.error(error);
-      setServerError("Google signup failed. Please try again.");
+      setServerError(t("errorGoogleSignup"));
     }
   };
 
@@ -87,13 +92,13 @@ React.ComponentProps<"form">)
         throw new Error(response.data.error || "Failed to create user");
       }
 
-      router.push("/auth/signin");
+      router.push(`/${currentLocale}/auth/signin`);
       router.refresh();
     } 
     catch (error) 
     {
       console.error(error);
-      setServerError("Qeydiyyat zamanı xəta baş verdi. Yenidən cəhd edin.");
+      setServerError(t("errorNetwork"));
     }
   };
 
@@ -102,40 +107,40 @@ React.ComponentProps<"form">)
       <FieldGroup className="gap-5">
         <div className="flex flex-col gap-1">
           <h1 className="text-3xl font-extrabold text-white">
-            Create <span className="text-yellow-500">Account</span>
+            {t("title")} <span className="text-yellow-500">{t("titleHighlight")}</span>
           </h1>
           <p className="text-sm text-gray-300">
-            Fill in your details below to join us.
+            {t("description")}
           </p>
         </div>
         <Field>
-          <FieldLabel htmlFor="name">Full Name</FieldLabel>
+          <FieldLabel htmlFor="name">{t("fullName")}</FieldLabel>
           <Input
             id="name"
             variant="auth"
             type="text"
-            placeholder="John Doe"
+            placeholder={t("fullNamePlaceholder")}
             {...register("name")}/>
             
           {errors.name && <FieldError>{errors.name.message}</FieldError>}
         </Field>
         <Field>
-          <FieldLabel htmlFor="email">Email</FieldLabel>
+          <FieldLabel htmlFor="email">{t("email")}</FieldLabel>
           <Input
             id="email"
             variant="auth"
             type="email"
-            placeholder="name@gmail.com"
+            placeholder={t("emailPlaceholder")}
             {...register("email")}/>
           {errors.email && <FieldError>{errors.email.message}</FieldError>}
         </Field>
         <Field>
-          <FieldLabel htmlFor="password">Password</FieldLabel>
+          <FieldLabel htmlFor="password">{t("password")}</FieldLabel>
           <Input
             id="password"
             variant="auth"
             type="password"
-            placeholder="••••••••"
+            placeholder={t("passwordPlaceholder")}
             {...register("password")}/>
 
           {errors.password && 
@@ -143,16 +148,16 @@ React.ComponentProps<"form">)
             <FieldError>{errors.password.message}</FieldError>
           )}
           <FieldDescription className="text-gray-400">
-            Must be at least 8 characters long.
+            {t("passwordRequirements")}
           </FieldDescription>
         </Field>
         <Field>
-          <FieldLabel htmlFor="confirm-password">Confirm Password</FieldLabel>
+          <FieldLabel htmlFor="confirm-password">{t("confirmPassword")}</FieldLabel>
           <Input
             id="confirm-password"
             variant="auth"
             type="password"
-            placeholder="••••••••"
+            placeholder={t("confirmPasswordPlaceholder")}
             {...register("confirmPassword")}/>
 
           {errors.confirmPassword && 
@@ -166,11 +171,11 @@ React.ComponentProps<"form">)
             type="submit"
             disabled={isSubmitting}
             className="w-full rounded-lg bg-yellow-400 py-3 text-sm font-bold text-gray-900 transition-colors hover:bg-yellow-500 disabled:opacity-60">
-            {isSubmitting ? "Creating account..." : "SIGN UP"}
+            {isSubmitting ? t("signingUp") : t("signupButton")}
           </button>
         </Field>
         <span className="text-sm text-gray-300 text-center">
-          Or continue with
+          {t("orContinueWith")}
         </span>
         <Field>
           <button
@@ -178,12 +183,12 @@ React.ComponentProps<"form">)
             disabled={isSubmitting}
             onClick={handleSignupWithGoogle}
             className="w-full rounded-lg bg-white py-3 text-sm font-bold text-gray-900 transition-colors hover:bg-gray-100 disabled:opacity-60">
-            Sign up with Google
+            {t("googleSignup")}
           </button>
           <FieldDescription className="text-center text-gray-300">
-            Already have an account?{" "}
-            <Link href="/auth/signin" className="font-semibold text-white underline-offset-4 hover:underline">
-              Sign in
+            {t("haveAccount")}{" "}
+            <Link href={`/${currentLocale}/auth/signin`} className="font-semibold text-white underline-offset-4 hover:underline">
+              {t("signin")}
             </Link>
           </FieldDescription>
         </Field>

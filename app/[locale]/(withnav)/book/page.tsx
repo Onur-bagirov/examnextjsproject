@@ -3,6 +3,7 @@ import Image from "next/image";
 import { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
 import { Users, Calendar, Clock, AlignLeft, User, Mail, Phone } from "lucide-react";
+import { useTranslations } from "next-intl";
 
 interface Booking
 {
@@ -24,6 +25,7 @@ const statusColors: Record<string, string> =
 
 export default function BookingEvent() 
 {
+    const t = useTranslations();
     const { status: sessionStatus } = useSession();
     const [guests, setGuests] = useState("");
     const [date, setDate] = useState("");
@@ -113,7 +115,7 @@ export default function BookingEvent()
         <div className="py-20 px-8 bg-white">
             <div className="max-w-6xl mx-auto">
                 <h1 className="text-center text-4xl font-extrabold text-[#1B1B3A] mb-16">
-                    Booking A Event
+                    {t("booking.title")}
                 </h1>
                 <div className="flex flex-col md:flex-row items-center gap-16 mb-16">
                     <div className="relative w-full md:w-1/2 h-[430px]">
@@ -150,16 +152,10 @@ export default function BookingEvent()
                     </div>
                     <div className="w-full md:w-1/2">
                         <h2 className="text-2xl font-bold text-[#1B1B3A] mb-4">
-                            About Booking Events
+                            {t("booking.about")}
                         </h2>
                         <p className="text-gray-600 leading-relaxed">
-                            There are many variations of passages of Lorem Ipsum
-                            available, but the majority have suffered alteration
-                            in some form, by injected humour, or randomised words
-                            which do not look even slightly believable. If you
-                            are going to use a passage of Lorem Ipsum, you need to
-                            be sure there is not anything embarrassing hidden
-                            in the middle of text.
+                            {t("booking.aboutDescription")}
                         </p>
                     </div>
                 </div>
@@ -167,7 +163,7 @@ export default function BookingEvent()
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
                         <div>
                             <label className="block font-bold text-gray-900 mb-3">
-                                Guest Estimate
+                                {t("booking.guestEstimate")}
                             </label>
                             <div className="flex items-center bg-gray-900 rounded-lg px-4 py-4">
                                 <input
@@ -175,7 +171,7 @@ export default function BookingEvent()
                                     min={1}
                                     value={guests}
                                     onChange={(e) => setGuests(e.target.value)}
-                                    placeholder="How many guest"
+                                    placeholder={t("booking.guestPlaceholder")}
                                     className="bg-transparent text-white placeholder-gray-400 outline-none w-full text-sm"
                                     required/>
                                 <Users className="text-gray-400" size={20} />
@@ -183,7 +179,7 @@ export default function BookingEvent()
                         </div>
                         <div>
                             <label className="block font-bold text-gray-900 mb-3">
-                                Date
+                                {t("booking.date")}
                             </label>
                             <div className="flex items-center bg-gray-900 rounded-lg px-4 py-4">
                                 <input
@@ -197,7 +193,7 @@ export default function BookingEvent()
                         </div>
                         <div>
                             <label className="block font-bold text-gray-900 mb-3">
-                                Time
+                                {t("booking.time")}
                             </label>
                             <div className="flex items-center bg-gray-900 rounded-lg px-4 py-4">
                                 <input
@@ -212,7 +208,7 @@ export default function BookingEvent()
                     </div>
                     <div className="mb-10">
                         <label className="block font-bold text-gray-900 mb-3">
-                            Write Your Special Requests
+                            {t("booking.specialRequests")}
                         </label>
                         <div className="flex items-start bg-gray-900 rounded-lg px-4 py-4">
                             <textarea
@@ -250,7 +246,7 @@ export default function BookingEvent()
                 (
                     <div className="mt-20">
                         <h2 className="text-center text-3xl font-extrabold text-[#1B1B3A] mb-8">
-                            My Bookings
+                            {t("booking.myBookings")}
                         </h2>
                         <div className="rounded-2xl border border-gray-200 overflow-hidden">
                             <div className="overflow-x-auto">

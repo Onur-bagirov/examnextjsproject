@@ -1,5 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
+import { useTranslations } from "next-intl";
 import Image from "next/image";
 
 interface CartItem 
@@ -22,6 +23,7 @@ interface Cart
 }
 
 export function CartView({ onCheckout }: { onCheckout: () => void }) {
+  const t = useTranslations();
   const [cart, setCart] = useState<Cart | null>(null);
   const [loading, setLoading] = useState(true);
   const [processing, setProcessing] = useState(false);
@@ -84,7 +86,7 @@ export function CartView({ onCheckout }: { onCheckout: () => void }) {
       if (!response.ok) 
       {
         const error = await response.json();
-        alert(error.error || "Payment failed.");
+        alert(error.error || t("cart.paymentFailed"));
         return;
       }
 
@@ -95,7 +97,7 @@ export function CartView({ onCheckout }: { onCheckout: () => void }) {
     catch (error) 
     {
       console.error("Checkout failed", error);
-      alert("An error occurred during payment.");
+      alert(t("cart.paymentError"));
     } 
     finally 
     {
@@ -105,14 +107,14 @@ export function CartView({ onCheckout }: { onCheckout: () => void }) {
 
   if (loading) 
   {
-    return <div className="text-center text-white py-8">Loading...</div>;
+    return <div className="text-center text-white py-8">{t("cart.loading")}</div>;
   }
 
   if (!cart || !cart.items || cart.items.length === 0) 
   {
     return (
       <div className="bg-gray-800 rounded-lg p-8 text-center">
-        <p className="text-gray-300 mb-4">The basket is empty.</p>
+        <p className="text-gray-300 mb-4">{t("cart.emptyBasket")}</p>
       </div>
     );
   }
@@ -121,7 +123,7 @@ export function CartView({ onCheckout }: { onCheckout: () => void }) {
 
   return (
     <div className="bg-gray-800 rounded-lg p-6 max-w-2xl">
-      <h2 className="text-2xl font-bold text-white mb-6">Basket</h2>
+      <h2 className="text-2xl font-bold text-white mb-6">{t("cart.basket")}</h2>
       <div className="space-y-4 mb-6">
         {cart.items.map((item) => 
         (
@@ -139,14 +141,14 @@ export function CartView({ onCheckout }: { onCheckout: () => void }) {
             <div className="flex-1">
               <h3 className="font-bold text-white">{item.product.name}</h3>
               <p className="text-yellow-400">₼{item.product.price.toFixed(2)}</p>
-              <p className="text-gray-300 text-sm">Quantity: {item.quantity}</p>
+              <p className="text-gray-300 text-sm">{t("cart.quantity")} {item.quantity}</p>
             </div>
             <div className="text-right">
               <p className="text-white font-bold">₼{(item.product.price * item.quantity).toFixed(2)}</p>
               <button
                 onClick={() => removeItem(item.id)}
                 className="text-red-400 hover:text-red-300 text-sm mt-2">
-                Delete
+                {t("cart.delete")}
               </button>
             </div>
           </div>
@@ -154,14 +156,14 @@ export function CartView({ onCheckout }: { onCheckout: () => void }) {
       </div>
       <div className="border-t border-gray-600 pt-4">
         <div className="flex justify-between mb-6">
-          <span className="text-lg font-bold text-white">Total:</span>
+          <span className="text-lg font-bold text-white">{t("cart.total")}:</span>
           <span className="text-2xl font-bold text-yellow-400">₼{total.toFixed(2)}</span>
         </div>
         <button
           onClick={handleCheckout}
           disabled={processing}
           className="w-full bg-yellow-400 hover:bg-yellow-500 disabled:opacity-60 text-gray-900 font-bold py-3 rounded">
-          {processing ? "Being processed..." : "Proceed to Payment"}
+          {processing ? t("cart.beingProcessed") : t("cart.proceedToPayment")}
         </button>
       </div>
     </div>

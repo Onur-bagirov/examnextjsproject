@@ -2,8 +2,10 @@
 import Image from "next/image";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useState } from "react";
+import { useTranslations } from "next-intl";
 
 export default function BlogPage() {
+    const t = useTranslations();
     const [currentBlogSlide, setCurrentBlogSlide] = useState(1);
     const [currentReviewSlide, setCurrentReviewSlide] = useState(1);
 
@@ -14,7 +16,7 @@ export default function BlogPage() {
             image: "/Image/Burger1.jpg",
             author: "Robert Leo",
             category: "Restaurant",
-            description: "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s when an unknown printer took a galley of type and scrambled it to make a type."
+            description: t("blog.description")
         },
         {
             id: 2,
@@ -22,7 +24,7 @@ export default function BlogPage() {
             image: "/Image/Burger2.jpg",
             author: "Anthony Leo",
             category: "Food",
-            description: "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s when an unknown printer took a galley of type and scrambled it to make a type."
+            description: t("blog.description")
         },
         {
             id: 3,
@@ -30,7 +32,7 @@ export default function BlogPage() {
             image: "/Image/Burger3.jpg",
             author: "Jane Jenny",
             category: "Party",
-            description: "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s when an unknown printer took a galley of type and scrambled it to make a type."
+            description: t("blog.description")
         }
     ];
 
@@ -48,8 +50,8 @@ export default function BlogPage() {
         <main className="bg-white">
             <section className="py-20 px-4 sm:px-6 lg:px-8">
                 <div className="max-w-7xl mx-auto">
-                    <h1 className="text-5xl font-bold text-center mb-4 text-gray-900">Our Blog</h1>
-                    <p className="text-center text-xl text-gray-600 mb-16">More about the article</p>
+                    <h1 className="text-5xl font-bold text-center mb-4 text-gray-900">{t("blog.title")}</h1>
+                    <p className="text-center text-xl text-gray-600 mb-16">{t("blog.subtitle")}</p>
                     <div className="relative flex items-center justify-center gap-4">
                         <button 
                             onClick={prevBlogSlide}
@@ -91,7 +93,7 @@ export default function BlogPage() {
                                             <h3 className="text-lg font-semibold mb-4 line-clamp-2">{blog.title}</h3>
                                             <p className="text-sm text-gray-300 mb-6 line-clamp-3">{blog.description}</p>
                                             <button className="text-yellow-400 font-semibold text-sm hover:text-yellow-300 transition-colors">
-                                                Read More →
+                                                {t("common.readMore")} →
                                             </button>
                                         </div>
                                     </div>

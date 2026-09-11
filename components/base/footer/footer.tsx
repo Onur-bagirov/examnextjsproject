@@ -1,25 +1,28 @@
+"use client";
 import Image from "next/image";
+import { useTranslations } from "next-intl";
 
 export default function Footer()
 {
+    const t = useTranslations();
     return(
         <footer>
             <div className="bg-gray-950 px-8 py-8">
                 <div className="flex flex-wrap items-center gap-4 max-w-7xl mx-auto">
                     <h2 className="text-white text-sxl font-bold shrink-0">
-                        Contact Us
+                        {t("footer.contactUs")}
                     </h2>
                     <input 
                         type="email" 
-                        placeholder="Enter your mail" 
+                        placeholder={t("footer.enterEmail")}
                         className="flex-1 min-w-[200px] bg-blue-100 text-gray-900 placeholder-gray-500 rounded-full px-6 py-3 outline-none"/>
                     
                     <input  
                         type="text"
-                        placeholder="Enter your message"
+                        placeholder={t("footer.enterMessage")}
                         className="flex-1 min-w-[200px] bg-blue-100 text-gray-900 placeholder-gray-500 rounded-full px-6 py-3 outline-none"/>
                     <button className="bg-red-600  hover:bg-red-700 text-white font-semibold px-8 py-3 rounded-full shrink-0" >
-                        Submit
+                        {t("footer.submit")}
                     </button>
                 </div> 
             </div>
@@ -38,11 +41,7 @@ export default function Footer()
                             </span>
                         </div>
                             <p className="text-gray-700 leading-relaxed mb-6">
-                                The burger is so delicious and the service is up to the mark. We
-                                love the ambience. Also a cool place for couple. Quite
-                                expensive, but worth it! Their brioche bun is in a whole new
-                                league of its own. If taste is your priority, you can
-                                undoubtedly give it a try here!
+                                {t("footer.description") || "The burger is so delicious and the service is up to the mark. We love the ambience. Also a cool place for couple. Quite expensive, but worth it! Their brioche bun is in a whole new league of its own. If taste is your priority, you can undoubtedly give it a try here!"}
                             </p>
                             <div className="flex gap-5 items-center">
                                 <Image
@@ -72,37 +71,37 @@ export default function Footer()
                             </div>
                         </div>
                         <div>
-                            <h3 className="text-xl font-bold mb-6 text-gray-900">All Navigations</h3>
+                            <h3 className="text-xl font-bold mb-6 text-gray-900">{t("footer.allNavigations")}</h3>
                             <ul className="space-y-3 text-gray-800 font-medium list-disc list-inside">
-                            <li>Home</li>
-                            <li>Menu</li>
-                            <li>Hot Deals</li>
-                            <li>Blog</li>
-                            <li>Booking Events</li>
+                            <li>{t("footer.home")}</li>
+                            <li>{t("footer.menu")}</li>
+                            <li>{t("footer.hotDeals")}</li>
+                            <li>{t("footer.blog")}</li>
+                            <li>{t("footer.bookingEvents")}</li>
                             </ul>
                         </div>
                         <div>
-                            <h3 className="text-xl font-bold mb-6 text-gray-900">Contact Info</h3>
+                            <h3 className="text-xl font-bold mb-6 text-gray-900">{t("footer.contactInfo")}</h3>
                             <ul className="space-y-3 text-gray-800 font-medium list-disc list-inside">
-                            <li>01241-31215169</li>
-                            <li>burgerhut@gmail.com</li>
-                            <li>Street: 1-road, Chittagong</li>
-                            <li>Chattogram, Bangladesh</li>
+                            <li>{t("footer.phone")}</li>
+                            <li>{t("footer.email")}</li>
+                            <li>{t("footer.street")}</li>
+                            <li>{t("footer.city")}</li>
                             </ul>
                         </div>
                         <div>
-                            <h3 className="text-xl font-bold mb-6 text-gray-900">Opening Time</h3>
+                            <h3 className="text-xl font-bold mb-6 text-gray-900">{t("footer.openingTime")}</h3>
                             <ul className="space-y-3 text-gray-800 font-medium list-disc list-inside">
                                 <li>
-                                    Saturday to Wednesday
+                                    {t("footer.saturdayToWednesday")}
                                     <br />
-                                    <span className="ml-4">(8:00 am to 9:00 pm)</span>
+                                    <span className="ml-4">{t("footer.businessHours1")}</span>
                                 </li>
                                 <li>
-                                    Thursday (8am to 7pm)
+                                    {t("footer.thursday")} {t("footer.businessHours2")}
                                 </li>
                                 <li>
-                                    Friday (<span className="text-green-600">Close</span>)
+                                    {t("footer.friday")} (<span className="text-green-600">{t("footer.closed")}</span>)
                                 </li>
                             </ul>
                         </div>
@@ -111,8 +110,8 @@ export default function Footer()
                 <div className="text-center  py-1">
                     <div className="border-t border-gray-900 mt-10 w-full" />   
                     <p className="font-bold text-gray-900 mt-5">
-                        Copyright <span className="text-blue-500">©</span> 2014, burger hut{" "}
-                        <span className="text-red-600">foodies</span>
+                        {t("footer.copyright")} <span className="text-blue-500">©</span> {t("footer.year")}, {t("footer.burgerHut")}{" "}
+                        <span className="text-red-600">{t("footer.foodies")}</span>
                     </p>
                 </div>
             </div>

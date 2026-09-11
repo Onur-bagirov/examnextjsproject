@@ -1,6 +1,8 @@
 import Image from "next/image";
+import { useTranslations } from "next-intl";
 
 export default function Deals() {
+    const t = useTranslations();
     return (
         <div className="py-20 px-8 bg-white">
             <div className="max-w-6xl mx-auto">
@@ -28,9 +30,7 @@ export default function Deals() {
                             Burger Bizz Fries &amp; Drinks
                         </h3>
                         <p className="text-gray-600 leading-relaxed mb-8">
-                            Contrary to popular belief, Lorem Ipsum is not simply
-                            random text. It has roots in a piece of classical Latin
-                            literature from 45 BC, making it over 2000 years old.
+                            {t("deals.description")}
                         </p>
                         <button className="bg-yellow-400 hover:bg-yellow-500 text-white font-bold px-8 py-3 rounded-md">
                             Visit Now

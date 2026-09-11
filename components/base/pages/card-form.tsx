@@ -1,5 +1,6 @@
 "use client";
 import { useState } from "react";
+import { useTranslations } from "next-intl";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -18,6 +19,7 @@ const cardSchema = z.object(
 type CardFormData = z.infer<typeof cardSchema>;
 
 export default function CardFormStyled() {
+  const t = useTranslations();
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
 
@@ -80,7 +82,7 @@ export default function CardFormStyled() {
           <Wallet className="w-6 h-6 text-white" />
         </div>
         <div>
-          <h2 className="text-3xl font-bold text-gray-900">Add Balance</h2>
+          <h2 className="text-3xl font-bold text-gray-900">{t("balance.addFunds")}</h2>
           <p className="text-sm text-gray-600 flex items-center gap-1 mt-1">
             <Lock className="w-4 h-4" />
             Secure Payment
@@ -106,7 +108,7 @@ export default function CardFormStyled() {
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
         <div className="space-y-2">
           <label className="block text-sm font-bold text-gray-900">
-            Card Number <span className="text-red-500">*</span>
+            {t("payment.cardNumber")} <span className="text-red-500">*</span>
           </label>
           <div className="relative">
             <input
@@ -131,7 +133,7 @@ export default function CardFormStyled() {
         </div>
         <div className="space-y-2">
           <label className="block text-sm font-bold text-gray-900">
-            Cardholder Name <span className="text-red-500">*</span>
+            {t("payment.cardholderName")} <span className="text-red-500">*</span>
           </label>
           <input
             {...register("cardName")}
@@ -152,7 +154,7 @@ export default function CardFormStyled() {
         </div>
         <div className="space-y-2">
           <label className="block text-sm font-bold text-gray-900">
-            Expiry & CVV <span className="text-red-500">*</span>
+            {t("payment.expiryDate")} & {t("payment.cvv")} <span className="text-red-500">*</span>
           </label>
           <div className="grid grid-cols-4 gap-3">
             <div>
@@ -208,7 +210,7 @@ export default function CardFormStyled() {
         </div>
         <div className="space-y-2">
           <label className="block text-sm font-bold text-gray-900">
-            Amount <span className="text-red-500">*</span>
+            {t("payment.amount")} <span className="text-red-500">*</span>
           </label>
           <div className="relative">
             <span className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-900 font-bold text-lg">
@@ -247,7 +249,7 @@ export default function CardFormStyled() {
           (
             <>
               <Wallet className="w-5 h-5" />
-              <span>Add Balance</span>
+              <span>{t("balance.addFunds")}</span>
             </>
           )}
         </button>

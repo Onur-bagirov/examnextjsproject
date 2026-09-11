@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Popover, PopoverTrigger, PopoverContent } from "@/components/ui/popover";
 import { useSession } from "next-auth/react";
 import { Link, usePathname, useRouter } from "@/i18n/routing";
-import { useLocale } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import Image from "next/image";
 import { LogOut, User, Wallet } from "lucide-react";
 import { signOut } from "next-auth/react";
@@ -14,6 +14,7 @@ export default function Header() {
     const router = useRouter();
     const pathname = usePathname();
     const locale = useLocale();
+    const t = useTranslations();
 
     const handleLanguageChange = (nextLocale: "en" | "az") => {
         router.replace(pathname, { locale: nextLocale });
@@ -106,19 +107,19 @@ export default function Header() {
             </div>
             <nav className="flex gap-12">
                 <Link href="/" className="text-gray-800 font-medium hover:text-gray-600">
-                    Home
+                    {t("header.home")}
                 </Link>
                 <Link href="/menu" className="text-yellow-500 font-semibold hover:text-yellow-600">
-                    Menu
+                    {t("header.menu")}
                 </Link>
                 <Link href="/deals" className="text-yellow-500 font-semibold hover:text-yellow-600">
-                    Hot deals
+                    {t("header.hotdeals")}
                 </Link>
                 <Link href="/blog" className="text-gray-800 font-medium hover:text-gray-600">
-                    Blog
+                    {t("header.blog")}
                 </Link>
                 <Link href="/book" className="text-gray-800 font-medium hover:text-gray-600">
-                    Book
+                    {t("header.book")}
                 </Link>
             </nav>
             <div className="flex gap-4 items-center">
@@ -164,7 +165,7 @@ export default function Header() {
                             <PopoverContent className="w-80">
                                 <div className="flex flex-col gap-4">
                                     <div className="pb-4 border-b border-gray-200">
-                                        <p className="text-sm text-gray-600">Logged in as</p>
+                                        <p className="text-sm text-gray-600">{t("header.loggedInAs")}</p>
                                         <p className="font-semibold text-gray-900">
                                             {session?.user?.name || session?.user?.email}
                                         </p>
@@ -172,20 +173,20 @@ export default function Header() {
                                         <p className={`text-sm font-semibold mt-2 flex items-center gap-1 ${
                                             balance > 0 ? "text-green-600" : "text-red-600"}`}>
                                             <Wallet className="w-4 h-4" />
-                                            Balance: ${balance.toFixed(2)}
+                                            {t("header.balance")}: ${balance.toFixed(2)}
                                         </p>
                                     </div>
                                     <Link href="/profile" className="w-full">
                                         <button className="w-full flex items-center gap-2 px-4 py-2 rounded border border-gray-300 hover:bg-gray-100 transition-colors justify-start">
                                             <User className="w-4 h-4" />
-                                            View Profile
+                                            {t("header.viewProfile")}
                                         </button>
                                     </Link>
                                     <button
                                         className="w-full flex items-center gap-2 px-4 py-2 rounded border border-gray-300 hover:bg-red-50 transition-colors justify-start text-red-600 hover:text-red-700"
                                         onClick={handleLogout}>
                                         <LogOut className="w-4 h-4" />
-                                        Logout
+                                        {t("header.logout")}
                                     </button>
                                 </div>
                             </PopoverContent>
@@ -195,7 +196,7 @@ export default function Header() {
                 (
                     <Link href="/auth/signin">
                         <Button className="bg-yellow-400 text-black font-bold px-6 py-2 rounded hover:bg-yellow-500">
-                            LOGIN
+                            {t("header.login")}
                         </Button>
                     </Link>
                 )}

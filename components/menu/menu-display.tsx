@@ -1,5 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
+import { useTranslations } from "next-intl";
 import Image from "next/image";
 
 interface Product 
@@ -13,6 +14,7 @@ interface Product
 }
 
 export function MenuDisplay({ onAddToCart }: { onAddToCart: (product: Product, quantity: number) => void }) {
+  const t = useTranslations();
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [quantities, setQuantities] = useState<Record<string, number>>({});
@@ -44,12 +46,12 @@ export function MenuDisplay({ onAddToCart }: { onAddToCart: (product: Product, q
 
   if (loading) 
   {
-    return <div className="text-center text-white py-8">Loading...</div>;
+    return <div className="text-center text-white py-8">{t("common.loading")}</div>;
   }
 
   if (products.length === 0) 
   {
-    return <div className="text-center text-gray-300 py-8">No products found.</div>;
+    return <div className="text-center text-gray-300 py-8">{t("common.noData")}</div>;
   }
 
   return (
@@ -81,7 +83,7 @@ export function MenuDisplay({ onAddToCart }: { onAddToCart: (product: Product, q
             <div className="flex justify-between items-center mb-4">
               <span className="text-xl font-bold text-yellow-400">₼{product.price.toFixed(2)}</span>
               <span className={`text-sm font-semibold ${product.stock > 0 ? "text-green-400" : "text-red-400"}`}>
-                {product.stock > 0 ? `${product.stock} there are` : "There is none"}
+                {product.stock > 0 ? `${product.stock} ${t("menu.stockAvailable")}` : t("menu.noStock")}
               </span>
             </div>
             <div className="flex gap-2">
@@ -105,7 +107,7 @@ export function MenuDisplay({ onAddToCart }: { onAddToCart: (product: Product, q
                 onClick={() => onAddToCart(product, quantities[product.id] || 1)}
                 disabled={product.stock === 0}
                 className="flex-1 bg-yellow-400 hover:bg-yellow-500 disabled:opacity-60 text-gray-900 font-bold py-2 rounded">
-                Add
+                {t("menu.addToCart")}
               </button>
             </div>
           </div>
