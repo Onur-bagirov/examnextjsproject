@@ -1,211 +1,121 @@
-"use client";
-import { Button } from "@/components/ui/button";
-import { Popover, PopoverTrigger, PopoverContent } from "@/components/ui/popover";
-import { useSession } from "next-auth/react";
-import Link from "next/link";
 import Image from "next/image";
-import { LogOut, User, Wallet } from "lucide-react";
-import { signOut } from "next-auth/react";
-import { useState, useEffect } from "react";
-import { useTranslations } from "next-intl";
-import { useRouter, usePathname } from "next/navigation";
 
-export default function Header() {
-    const { status, data: session } = useSession();
-    const [balance, setBalance] = useState<number>(0);
-    const [loadingBalance, setLoadingBalance] = useState(true);
-    const t = useTranslations("header");
-    const router = useRouter();
-    const pathname = usePathname();
-
-    const currentLocale = pathname.split("/")[1] || "en";
-    const [language, setLanguage] = useState(currentLocale === "az" ? "AZ" : "EN");
-
-    const isAuthenticated = status === "authenticated";
-
-    const fetchBalance = async () => 
-    {
-        try 
-        {
-            const response = await fetch("/api/balance");
-            const data = await response.json();
-            setBalance(data.balance || 0);
-        } 
-        catch (error) 
-        {
-            console.error("Failed to fetch balance:", error);
-        } 
-        finally 
-        {
-            setLoadingBalance(false);
-        }
-    };
-
-    useEffect(() => 
-    {
-        if (isAuthenticated) 
-        {
-            fetchBalance();
-        }
-    }, [isAuthenticated]);
-
-    useEffect(() => 
-    {
-        if (!isAuthenticated) 
-        {
-            return;
-        }
-
-        const interval = setInterval(() => 
-        {
-            fetchBalance();
-        }, 3000);
-
-        return () => clearInterval(interval);
-    }, [isAuthenticated]);
-
-    useEffect(() => 
-    {
-        const handleBalanceUpdate = () => 
-        {
-            fetchBalance();
-        };
-
-        window.addEventListener("balanceUpdated", handleBalanceUpdate);
-        return () => window.removeEventListener("balanceUpdated", handleBalanceUpdate);
-    }, []);
-
-    const handleLogout = () => 
-    {
-        signOut({ callbackUrl: `/${currentLocale}/auth/signin` });
-    };
-
-    const changeLanguage = (lang: string) => {
-        const newLocale = lang === "EN" ? "en" : "az";
-        setLanguage(lang);
-        const newPath = pathname.replace(`/${currentLocale}`, `/${newLocale}`);
-        router.push(newPath);
-    };
-
-    const getBalanceColor = () => 
-    {
-        return balance === 0 ? "bg-red-500 hover:bg-red-600" : "bg-green-500 hover:bg-green-600";
-    };
-
-    return (
-        <header className="bg-gray-200 px-8 py-4 flex justify-between items-center">
-            <div className="flex gap-3 flex-row items-center justify-center">
-                <div className="relative w-16 h-16 bg-gradient-to-b from-gray-900 to-gray-800 rounded-full overflow-hidden flex-shrink-0">
-                    <Image
-                        src="/Image/heder1.png"
-                        alt="header1"
-                        width={64}
-                        height={64}
-                        className="object-cover w-full h-full"
-                        priority/>
+export default function Footer()
+{
+    return(
+        <footer>
+            <div className="bg-gray-950 px-8 py-8">
+                <div className="flex flex-wrap items-center gap-4 max-w-7xl mx-auto">
+                    <h2 className="text-white text-sxl font-bold shrink-0">
+                        Contact Us
+                    </h2>
+                    <input 
+                        type="email" 
+                        placeholder="Enter your mail" 
+                        className="flex-1 min-w-[200px] bg-blue-100 text-gray-900 placeholder-gray-500 rounded-full px-6 py-3 outline-none"/>
+                    
+                    <input  
+                        type="text"
+                        placeholder="Enter your message"
+                        className="flex-1 min-w-[200px] bg-blue-100 text-gray-900 placeholder-gray-500 rounded-full px-6 py-3 outline-none"/>
+                    <button className="bg-red-600  hover:bg-red-700 text-white font-semibold px-8 py-3 rounded-full shrink-0" >
+                        Submit
+                    </button>
+                </div> 
+            </div>
+            <div className="bg-gray-100 px-8 py-16">
+                <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-10" >
+                    <div>
+                        <div className="flex items-center gap-3 mb-6">
+                            <Image
+                                src="/Image/heder1.png"
+                                alt="heder1"
+                                width={48}
+                                height={48}
+                                className="object-cover w-12 h-12 rounded-full"/>
+                            <span className="text-2xl font-bold text-gray-900">
+                                BURGER <span className="italic font-normal">Hut</span>
+                            </span>
+                        </div>
+                            <p className="text-gray-700 leading-relaxed mb-6">
+                                The burger is so delicious and the service is up to the mark. We
+                                love the ambience. Also a cool place for couple. Quite
+                                expensive, but worth it! Their brioche bun is in a whole new
+                                league of its own. If taste is your priority, you can
+                                undoubtedly give it a try here!
+                            </p>
+                            <div className="flex gap-5 items-center">
+                                <Image
+                                    src="/Image/twitter.png"
+                                    alt="twitter"
+                                    width={24}
+                                    height={24}
+                                    className="cursor-pointer"/>
+                                <Image
+                                    src="/Image/facebook.png"
+                                    alt="facebook"
+                                    width={24}
+                                    height={24}
+                                    className="cursor-pointer"/>
+                                <Image
+                                    src="/Image/instagram.png"
+                                    alt="instagram"
+                                    width={24}
+                                    height={24}
+                                    className="cursor-pointer"/>
+                                <Image
+                                    src="/Image/github.png"
+                                    alt="github"
+                                    width={24}
+                                    height={24}
+                                    className="cursor-pointer"/>
+                            </div>
+                        </div>
+                        <div>
+                            <h3 className="text-xl font-bold mb-6 text-gray-900">All Navigations</h3>
+                            <ul className="space-y-3 text-gray-800 font-medium list-disc list-inside">
+                            <li>Home</li>
+                            <li>Menu</li>
+                            <li>Hot Deals</li>
+                            <li>Blog</li>
+                            <li>Booking Events</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h3 className="text-xl font-bold mb-6 text-gray-900">Contact Info</h3>
+                            <ul className="space-y-3 text-gray-800 font-medium list-disc list-inside">
+                            <li>01241-31215169</li>
+                            <li>burgerhut@gmail.com</li>
+                            <li>Street: 1-road, Chittagong</li>
+                            <li>Chattogram, Bangladesh</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <h3 className="text-xl font-bold mb-6 text-gray-900">Opening Time</h3>
+                            <ul className="space-y-3 text-gray-800 font-medium list-disc list-inside">
+                                <li>
+                                    Saturday to Wednesday
+                                    <br />
+                                    <span className="ml-4">(8:00 am to 9:00 pm)</span>
+                                </li>
+                                <li>
+                                    Thursday (8am to 7pm)
+                                </li>
+                                <li>
+                                    Friday (<span className="text-green-600">Close</span>)
+                                </li>
+                            </ul>
+                        </div>
+                    <div/>
                 </div>
-                <div>
-                    <span className="text-2xl font-bold text-gray-900">
-                        BURGER <span className="italic font-normal">Hut</span>
-                    </span>
+                <div className="text-center  py-1">
+                    <div className="border-t border-gray-900 mt-10 w-full" />   
+                    <p className="font-bold text-gray-900 mt-5">
+                        Copyright <span className="text-blue-500">©</span> 2014, burger hut{" "}
+                        <span className="text-red-600">foodies</span>
+                    </p>
                 </div>
             </div>
-            <nav className="flex gap-12">
-                <Link href="/" className="text-gray-800 font-medium hover:text-gray-600">
-                    {t("home")}
-                </Link>
-                <Link href="/menu" className="text-yellow-500 font-semibold hover:text-yellow-600">
-                    {t("menu")}
-                </Link>
-                <Link href="/deals" className="text-yellow-500 font-semibold hover:text-yellow-600">
-                    {t("hotdeals")}
-                </Link>
-                <Link href="/blog" className="text-gray-800 font-medium hover:text-gray-600">
-                    {t("blog")}
-                </Link>
-                <Link href="/book" className="text-gray-800 font-medium hover:text-gray-600">
-                    {t("book")}
-                </Link>
-            </nav>
-            <div className="flex gap-4 items-center">
-                <div className="flex bg-gray-300 rounded-lg p-1">
-                    <button
-                        onClick={() => changeLanguage("EN")}
-                        className={`px-3 py-1 rounded font-semibold transition-colors ${
-                            language === "EN"
-                                ? "bg-yellow-400 text-black"
-                                : "text-gray-700 hover:text-gray-900"}`}>
-                        EN
-                    </button>
-                    <button
-                        onClick={() => changeLanguage("AZ")}
-                        className={`px-3 py-1 rounded font-semibold transition-colors ${
-                            language === "AZ"
-                                ? "bg-yellow-400 text-black"
-                                : "text-gray-700 hover:text-gray-900"}`}>
-                        AZ
-                    </button>
-                </div>
-                {isAuthenticated ? 
-                (
-                    <>
-                        <Link href="/balance">
-                            <button
-                                className={`flex items-center gap-2 ${getBalanceColor()} text-white font-bold px-4 py-2 rounded-lg transition-all ${
-                                    balance > 0 ? "animate-pulse-soft" : ""
-                                }`}
-                                title="Automatically updates every 3 seconds">
-                                <Wallet className="w-5 h-5" />
-                                {loadingBalance ? "..." : `$${balance.toFixed(2)}`}
-                            </button>
-                        </Link>
-                        <Popover>
-                            <PopoverTrigger asChild>
-                                <button className="rounded-full bg-yellow-400 p-2 h-10 w-10 flex items-center justify-center border-2 border-yellow-500 cursor-pointer hover:bg-yellow-500 transition-colors">
-                                    <h3 className="text-lg font-bold text-gray-900">
-                                        {session?.user?.name?.charAt(0).toUpperCase() || "U"}
-                                    </h3>
-                                </button>
-                            </PopoverTrigger>
-                            <PopoverContent className="w-80">
-                                <div className="flex flex-col gap-4">
-                                    <div className="pb-4 border-b border-gray-200">
-                                        <p className="text-sm text-gray-600">{t("loggedInAs")}</p>
-                                        <p className="font-semibold text-gray-900">
-                                            {session?.user?.name || session?.user?.email}
-                                        </p>
-                                        <p className="text-sm text-gray-500">{session?.user?.email}</p>
-                                        <p className={`text-sm font-semibold mt-2 flex items-center gap-1 ${
-                                            balance > 0 ? "text-green-600" : "text-red-600"}`}>
-                                            <Wallet className="w-4 h-4" />
-                                            {t("balance")}: ${balance.toFixed(2)}
-                                        </p>
-                                    </div>
-                                    <Link href="/profile" className="w-full">
-                                        <button className="w-full flex items-center gap-2 px-4 py-2 rounded border border-gray-300 hover:bg-gray-100 transition-colors justify-start">
-                                            <User className="w-4 h-4" />
-                                            {t("viewProfile")}
-                                        </button>
-                                    </Link>
-                                    <button
-                                        className="w-full flex items-center gap-2 px-4 py-2 rounded border border-gray-300 hover:bg-red-50 transition-colors justify-start text-red-600 hover:text-red-700"
-                                        onClick={handleLogout}>
-                                        <LogOut className="w-4 h-4" />
-                                        {t("logout")}
-                                    </button>
-                                </div>
-                            </PopoverContent>
-                        </Popover>
-                    </>
-                ) : 
-                (
-                    <Link href="/auth/signin">
-                        <Button className="bg-yellow-400 text-black font-bold px-6 py-2 rounded hover:bg-yellow-500">
-                            {t("login")}
-                        </Button>
-                    </Link>
-                )}
-            </div>
-        </header>
-    );
+        </footer>
+    )
 }

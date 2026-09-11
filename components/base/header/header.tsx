@@ -2,7 +2,8 @@
 import { Button } from "@/components/ui/button";
 import { Popover, PopoverTrigger, PopoverContent } from "@/components/ui/popover";
 import { useSession } from "next-auth/react";
-import Link from "next/link";
+import { Link, usePathname, useRouter } from "@/i18n/routing";
+import { useLocale } from "next-intl";
 import Image from "next/image";
 import { LogOut, User, Wallet } from "lucide-react";
 import { signOut } from "next-auth/react";
@@ -10,7 +11,14 @@ import { useState, useEffect } from "react";
 
 export default function Header() {
     const { status, data: session } = useSession();
-    const [language, setLanguage] = useState("EN");
+    const router = useRouter();
+    const pathname = usePathname();
+    const locale = useLocale();
+
+    const handleLanguageChange = (nextLocale: "en" | "az") => {
+        router.replace(pathname, { locale: nextLocale });
+    };
+
     const [balance, setBalance] = useState<number>(0);
     const [loadingBalance, setLoadingBalance] = useState(true);
 
@@ -116,17 +124,17 @@ export default function Header() {
             <div className="flex gap-4 items-center">
                 <div className="flex bg-gray-300 rounded-lg p-1">
                     <button
-                        onClick={() => setLanguage("EN")}
+                        onClick={() => handleLanguageChange("en")}
                         className={`px-3 py-1 rounded font-semibold transition-colors ${
-                            language === "EN"
+                            locale === "en"
                                 ? "bg-yellow-400 text-black"
                                 : "text-gray-700 hover:text-gray-900"}`}>
                         EN
                     </button>
                     <button
-                        onClick={() => setLanguage("AZ")}
+                        onClick={() => handleLanguageChange("az")}
                         className={`px-3 py-1 rounded font-semibold transition-colors ${
-                            language === "AZ"
+                            locale === "az"
                                 ? "bg-yellow-400 text-black"
                                 : "text-gray-700 hover:text-gray-900"}`}>
                         AZ
