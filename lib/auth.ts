@@ -1,4 +1,5 @@
 import CredentialsProvider from "next-auth/providers/credentials";
+import GoogleProvider from "next-auth/providers/google";
 import { NextAuthOptions, DefaultSession } from "next-auth";
 import { JWT } from "next-auth/jwt";
 import { prisma } from "./db";
@@ -84,6 +85,11 @@ export const authOptions: NextAuthOptions = {
         };
       },
     }),
+    GoogleProvider({
+      clientId: process.env.GOOGLE_CLIENT_ID || "",
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET || "",
+      allowDangerousEmailAccountLinking: true,
+    }),
   ],
   pages: 
   {
@@ -95,14 +101,38 @@ export const authOptions: NextAuthOptions = {
   },
   callbacks: 
   {
-    async jwt({ token, user }: { token: JWT; user?: any }) 
+    async jwt({ token, user, account }: { token: JWT; user?: any; account?: any }) 
     {
       if (user) 
       {
         token.id = user.id;
-        token.role = user.role;
+        token.role = user.role || "user";
         token.image = user.image;
       }
+      
+      if (account?.provider === "google" && user) 
+      {
+        const existingUser = await prisma.user.findUnique({
+          where: { email: user.email },
+        });
+
+        if (!existingUser && user.email) 
+        {
+          const newUser = await prisma.user.create({
+            data: {
+              email: user.email,
+              name: user.name,
+              image: user.image,
+              password: "",
+              role: "user",
+            },
+          });
+          token.id = newUser.id;
+          token.role = newUser.role;
+          token.image = newUser.image;
+        }
+      }
+      
       return token;
     },
     async session({ session, token }: { session: any; token: JWT }) 

@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import { MenuDisplay } from "@/components/menu/menu-display";
 import { CartView } from "@/components/cart/cart-view";
 
@@ -18,6 +19,7 @@ interface Product
 
 export default function Menu() {
   const { status } = useSession();
+  const t = useTranslations();
   const isAuthenticated = status === "authenticated";
   const [cartKey, setCartKey] = useState(0);
   const [menuKey, setMenuKey] = useState(0);
@@ -27,7 +29,7 @@ export default function Menu() {
   {
     if (!isAuthenticated) 
     {
-      setFeedback("Please log in first to add to the cart.");
+      setFeedback(t("messages.loginRequired"));
       return;
     }
 
@@ -43,17 +45,17 @@ export default function Menu() {
       if (!response.ok) 
       {
         const error = await response.json();
-        setFeedback(error.error || "Could not be added to the cart");
+        setFeedback(error.error || t("messages.error"));
         return;
       }
 
-      setFeedback(`${product.name} added to cart`);
+      setFeedback(`${product.name} ${t("messages.savedSuccessfully")}`);
       setCartKey((prev) => prev + 1);
     } 
     catch (error) 
     {
       console.error("Failed to add to cart", error);
-      setFeedback("An error occurred while adding to the cart.");
+      setFeedback(t("messages.networkError"));
     }
   };
 
@@ -61,19 +63,18 @@ export default function Menu() {
     <div className="py-20 px-8 bg-gray-900 min-h-screen">
       <div className="max-w-6xl mx-auto">
         <h1 className="text-center text-4xl font-extrabold mb-4">
-          <span className="text-white">Favorite</span>{" "}
-          <span className="text-yellow-500">Menu</span>
+          <span className="text-white">{t("menu.favorite")}</span> <span className="text-yellow-500">{t("menu.menu")}</span>
         </h1>
         <p className="text-center text-lg font-semibold text-gray-300 mb-4">
-          Choose your favorite burger and add it to the cart.
+          {t("menu.chooseYourFavorite")}
         </p>
 
         {!isAuthenticated && 
         (
           <p className="text-center text-sm text-yellow-400 mb-8">
-            To place an order{" "}
+            {t("messages.loginRequired")}{" "}
             <Link href="/auth/signin" className="underline font-semibold">
-              You must log in.
+              {t("auth.signin.signinButton")}
             </Link>
           </p>
         )}
@@ -92,7 +93,7 @@ export default function Menu() {
               key={cartKey}
               onCheckout={() => 
               {
-                setFeedback("The order was successfully completed.");
+                setFeedback(t("messages.savedSuccessfully"));
                 setMenuKey((prev) => prev + 1);
               }}
             />

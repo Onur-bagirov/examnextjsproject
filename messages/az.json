@@ -9,7 +9,8 @@
     "logout": "Çıxış",
     "viewProfile": "Profili Gör",
     "loggedInAs": "Daxil olub",
-    "balance": "Balans"
+    "balance": "Balans",
+    "balanceTooltip": "Hər 3 saniyədi avtomatik yenilənir"
   },
   "home": {
     "title": "LAZZƏTİ HƏZ EDIN",
@@ -95,7 +96,6 @@
   },
   "menu": {
     "title": "Menyu",
-    "favoriteMenu": "Sevimli Menyu",
     "chooseYourFavorite": "Sevimli burgeri seçin və səbətə əlavə edin.",
     "addToCart": "Səbətə Əlavə Et",
     "price": "Qiymət",
@@ -105,7 +105,9 @@
     "noStock": "Yoxdur",
     "filter": "Filtr",
     "filterByCategory": "Kateqoriyaya Görə Filtrə Et",
-    "sortBy": "Sırala"
+    "sortBy": "Sırala",
+    "favorite": "Sevdiyim",
+    "menu": "Menyu"
   },
   "deals": {
     "title": "Sıcaq Təkliflər",
@@ -118,7 +120,12 @@
     "discount": "Endirim",
     "offerEnds": "Təklif bitir",
     "limited": "Məhdud",
-    "outOfStock": "Stokda yoxdur"
+    "outOfStock": "Stokda yoxdur",
+    "hot": "Ağ",
+    "deals": "Təkliflər",
+    "todayOffer": "Bu gün sizin üçün ən yaxşı təklif",
+    "specialComboPack": "Xüsusi Combo Paket",
+    "burgerBizz": "Burger Bizz Kartof & İçkilər"
   },
   "blog": {
     "title": "Bizim Blog",
@@ -177,7 +184,13 @@
     "profileUpdated": "Profil uğurla yeniləndi",
     "updateError": "Profil yenilənməsi uğursuz oldu",
     "changePassword": "Şifrəni Dəyişdir",
-    "logout": "Çıxış"
+    "logout": "Çıxış",
+    "emailAddress": "E-mail Ünvanı",
+    "accountRole": "Hesab Rolu",
+    "memberSince": "Üzv Olmaqdan Bəri",
+    "userId": "İstifadəçi ID",
+    "accountInformation": "Hesab Məlumatı",
+    "accountDescription": "Sizin profil tam olaraq qurulmuş və istifadəyə hazırdır. Siz sifarişlər verə, sifariş tarixçəsini görə və bütün xüsusiyyətlərdən istifadə edə bilərsiniz. Profil şəklini yükləmək üçün yuxarıdakı şəkil sahəsini klikləyin."
   },
   "payment": {
     "cardDetails": "Kart Məlumatları",

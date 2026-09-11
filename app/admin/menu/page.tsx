@@ -110,80 +110,92 @@ export default function MenuPage() {
     };
 
     return (
-        <div className="space-y-6">
-            <div className="flex items-center justify-between">
+        <div className="space-y-8 p-8 bg-gradient-to-br from-gray-50 to-white min-h-screen">
+            <div className="flex items-center justify-between border-b-2 border-yellow-400 pb-6">
                 <div>
-                    <h1 className="text-3xl font-bold tracking-tight text-gray-900">
+                    <h1 className="text-4xl font-bold tracking-tight text-gray-900 mb-2">
                         Menu Items
                     </h1>
-                    <p className="mt-1 text-sm text-gray-600">
+                    <p className="text-lg text-gray-600 font-medium">
                         Manage your restaurant menu items
                     </p>
                 </div>
                 <button
                     onClick={() => setShowForm((v) => !v)}
-                    className="flex items-center gap-2 bg-yellow-400 text-gray-900 font-bold px-4 py-2 rounded-lg hover:bg-yellow-500 transition-colors">
-                    {showForm ? <X className="size-4" /> : <Plus className="size-4" />}
-                    {showForm ? "Bağla" : "Add Item"}
+                    className="flex items-center gap-3 bg-gradient-to-r from-yellow-400 to-yellow-500 hover:from-yellow-500 hover:to-yellow-600 text-gray-900 font-bold px-8 py-4 rounded-xl transition-all shadow-lg hover:shadow-xl transform hover:scale-105">
+                    {showForm ? <X className="size-6" /> : <Plus className="size-6" />}
+                    <span className="text-lg">{showForm ? "Bağla" : "Add Item"}</span>
                 </button>
             </div>
 
             {showForm && 
             (
-                <ProductForm
-                    onSuccess={() => 
-                    {
-                        setShowForm(false);
-                        fetchProducts();
-                    }}
-                />
+                <div className="bg-white rounded-2xl shadow-xl p-8 border-2 border-yellow-300">
+                    <ProductForm
+                        onSuccess={() => 
+                        {
+                            setShowForm(false);
+                            fetchProducts();
+                        }}
+                    />
+                </div>
             )}
 
             {loading ? 
             (
-                <p className="text-gray-600">Loading...</p>
+                <div className="flex items-center justify-center py-20">
+                    <div className="text-center">
+                        <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-yellow-400 mb-4"></div>
+                        <p className="text-lg text-gray-600 font-medium">Loading menu items...</p>
+                    </div>
+                </div>
             ) : 
             products.length === 0 ? 
             (
-                <p className="text-gray-600">No products found</p>
+                <div className="flex items-center justify-center py-20 bg-white rounded-2xl border-2 border-dashed border-gray-300">
+                    <div className="text-center">
+                        <p className="text-xl text-gray-600 font-medium mb-2">No products found</p>
+                        <p className="text-gray-500">Click "Add Item" to create your first menu item</p>
+                    </div>
+                </div>
             ) : 
             (
-                <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+                <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
                     {products.map((item) => (
-                        <div key={item.id} className="rounded-2xl border border-white/40 bg-white/50 backdrop-blur-sm p-6 hover:bg-white/60 transition-all">
+                        <div key={item.id} className="rounded-2xl border-2 border-gray-200 bg-white p-7 hover:shadow-xl transition-all hover:border-yellow-400">
                             <div className="space-y-3">
                                 {editingId === item.id ? 
                                 (
-                                    <div className="space-y-2">
+                                    <div className="space-y-3 bg-gradient-to-br from-blue-50 to-indigo-50 p-5 rounded-xl border-2 border-blue-200">
                                         <input
-                                            className="w-full border rounded px-2 py-1 text-sm"
+                                            className="w-full border-2 border-blue-300 rounded-lg px-4 py-3 text-sm font-medium focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200"
                                             value={editValues.name}
                                             onChange={(e) => setEditValues({ ...editValues, name: e.target.value })}
-                                            placeholder="Name"/>
-                                        <div className="flex gap-2">
+                                            placeholder="Product Name"/>
+                                        <div className="flex gap-3">
                                             <input
                                                 type="number"
                                                 step="0.01"
-                                                className="w-1/2 border rounded px-2 py-1 text-sm"
+                                                className="w-1/2 border-2 border-blue-300 rounded-lg px-4 py-3 text-sm font-medium focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200"
                                                 value={editValues.price}
                                                 onChange={(e) => setEditValues({ ...editValues, price: e.target.value })}
-                                                placeholder="Price"/>
+                                                placeholder="Price (₼)"/>
                                             <input
                                                 type="number"
-                                                className="w-1/2 border rounded px-2 py-1 text-sm"
+                                                className="w-1/2 border-2 border-blue-300 rounded-lg px-4 py-3 text-sm font-medium focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-200"
                                                 value={editValues.stock}
                                                 onChange={(e) => setEditValues({ ...editValues, stock: e.target.value })}
                                                 placeholder="Stock"/>
                                         </div>
-                                        <div className="flex gap-2 pt-2">
+                                        <div className="flex gap-3 pt-3">
                                             <button
                                                 onClick={() => saveEdit(item.id)}
-                                                className="flex-1 bg-green-100 text-green-900 font-semibold px-3 py-2 rounded-lg hover:bg-green-200 transition-colors text-sm">
+                                                className="flex-1 bg-gradient-to-r from-green-400 to-green-500 hover:from-green-500 hover:to-green-600 text-white font-bold px-4 py-3 rounded-lg transition-all shadow-md hover:shadow-lg">
                                                 Save
                                             </button>
                                             <button
                                                 onClick={cancelEdit}
-                                                className="flex-1 bg-gray-100 text-gray-900 font-semibold px-3 py-2 rounded-lg hover:bg-gray-200 transition-colors text-sm">
+                                                className="flex-1 bg-gradient-to-r from-gray-400 to-gray-500 hover:from-gray-500 hover:to-gray-600 text-white font-bold px-4 py-3 rounded-lg transition-all shadow-md hover:shadow-lg">
                                                 Cancel
                                             </button>
                                         </div>
@@ -192,34 +204,45 @@ export default function MenuPage() {
                                 (
                                     <>
                                         <div>
-                                            <div className="flex items-start justify-between mb-2">
-                                                <div>
-                                                    <h3 className="font-bold text-lg text-gray-900">
+                                            <div className="flex items-start justify-between mb-4">
+                                                <div className="flex-1">
+                                                    <h3 className="font-bold text-xl text-gray-900 mb-2">
                                                         {item.name}
                                                     </h3>
-                                                    <p className="text-xs text-gray-600">
-                                                        {item.stock > 0 ? `${item.stock} units in stock` : "Out of stock"}
-                                                    </p>
+                                                    <div className="flex gap-4">
+                                                        <span className={`px-4 py-2 rounded-full text-xs font-bold ${
+                                                            item.stock > 0 
+                                                                ? "bg-green-100 text-green-800" 
+                                                                : "bg-red-100 text-red-800"
+                                                        }`}>
+                                                            {item.stock > 0 ? `${item.stock} in stock` : "Out of stock"}
+                                                        </span>
+                                                    </div>
                                                 </div>
-                                                <span className="text-xl font-bold text-gray-900">
-                                                    ₼{item.price.toFixed(2)}
-                                                </span>
+                                                <div className="text-right">
+                                                    <p className="text-sm text-gray-600 mb-1">Price</p>
+                                                    <span className="text-3xl font-bold text-yellow-600">
+                                                        ₼{item.price.toFixed(2)}
+                                                    </span>
+                                                </div>
                                             </div>
-                                            <p className="text-sm text-gray-600">
-                                                {item.description}
-                                            </p>
+                                            {item.description && (
+                                                <p className="text-sm text-gray-700 bg-gray-50 p-3 rounded-lg mb-4 border border-gray-200">
+                                                    {item.description}
+                                                </p>
+                                            )}
                                         </div>
-                                        <div className="flex gap-2 pt-4 border-t border-white/30">
+                                        <div className="flex gap-3 pt-4 border-t-2 border-gray-200">
                                             <button
                                                 onClick={() => startEdit(item)}
-                                                className="flex-1 flex items-center justify-center gap-2 bg-blue-100 text-blue-900 font-semibold px-3 py-2 rounded-lg hover:bg-blue-200 transition-colors text-sm">
-                                                <Edit2 className="size-3.5" />
+                                                className="flex-1 flex items-center justify-center gap-2 bg-gradient-to-r from-blue-400 to-blue-500 hover:from-blue-500 hover:to-blue-600 text-white font-bold px-4 py-3 rounded-lg transition-all shadow-md hover:shadow-lg">
+                                                <Edit2 className="size-4" />
                                                 Edit
                                             </button>
                                             <button
                                                 onClick={() => handleDelete(item.id)}
-                                                className="flex-1 flex items-center justify-center gap-2 bg-red-100 text-red-900 font-semibold px-3 py-2 rounded-lg hover:bg-red-200 transition-colors text-sm">
-                                                <Trash2 className="size-3.5" />
+                                                className="flex-1 flex items-center justify-center gap-2 bg-gradient-to-r from-red-400 to-red-500 hover:from-red-500 hover:to-red-600 text-white font-bold px-4 py-3 rounded-lg transition-all shadow-md hover:shadow-lg">
+                                                <Trash2 className="size-4" />
                                                 Delete
                                             </button>
                                         </div>

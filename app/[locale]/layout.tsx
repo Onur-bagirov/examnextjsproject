@@ -4,46 +4,50 @@ import { NextIntlClientProvider } from 'next-intl';
 import { getMessages } from 'next-intl/server';
 import { routing } from '@/i18n/routing';
 import Providers from '@/components/provider';
-import '../globals.css';
 
-export const metadata: Metadata = {
+export const metadata: Metadata = 
+{
   title: "Exam Project",
   description: "Authentication System",
 };
 
-export const viewport: Viewport = {
+export const viewport: Viewport = 
+{
   width: "device-width",
   initialScale: 1,
 };
 
-export function generateStaticParams() {
+export function generateStaticParams() 
+{
   return routing.locales.map((locale) => ({ locale }));
 }
 
-interface LocaleLayoutProps {
+interface LocaleLayoutProps 
+{
   children: React.ReactNode;
   params: Promise<{ locale: string }>;
 }
 
-export default async function LocaleLayout({
+export default async function LocaleLayout(
+{
   children,
   params,
-}: LocaleLayoutProps) {
+}: LocaleLayoutProps) 
+{
   const { locale } = await params;
 
-  if (!routing.locales.includes(locale as any)) {
+  if (!routing.locales.includes(locale as any)) 
+  {
     notFound();
   }
 
   const messages = await getMessages();
 
   return (
-    <html lang={locale} suppressHydrationWarning>
-      <body>
-        <NextIntlClientProvider messages={messages} locale={locale}>
-          <Providers>{children}</Providers>
-        </NextIntlClientProvider>
-      </body>
-    </html>
+    <Providers>
+      <NextIntlClientProvider messages={messages} locale={locale}>
+        {children}
+      </NextIntlClientProvider>
+    </Providers>
   );
 }

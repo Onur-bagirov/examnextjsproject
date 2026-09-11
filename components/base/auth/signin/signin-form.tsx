@@ -142,7 +142,10 @@ React.ComponentProps<"form">)
             type="button"
             disabled={isSubmitting}
             onClick={handleSigninWithGoogle}
-            className="w-full rounded-lg bg-white py-3 text-sm font-bold text-gray-900 transition-colors hover:bg-gray-100 disabled:opacity-60">
+            className="w-full flex items-center justify-center gap-3 rounded-lg bg-white hover:bg-gray-100 py-3 text-sm font-bold text-gray-900 transition-all border-2 border-white hover:border-gray-200 disabled:opacity-60 shadow-md hover:shadow-lg">
+            <svg className="w-5 h-5" viewBox="0 0 24 24">
+              <text x="50%" y="50%" dominantBaseline="middle" textAnchor="middle" fontSize="14" fill="#EA4335" fontWeight="bold">G</text>
+            </svg>
             {t("googleSignin")}
           </button>
           <FieldDescription className="text-center text-gray-300">

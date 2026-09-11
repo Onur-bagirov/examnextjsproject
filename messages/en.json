@@ -9,7 +9,8 @@
     "logout": "Logout",
     "viewProfile": "View Profile",
     "loggedInAs": "Logged in as",
-    "balance": "Balance"
+    "balance": "Balance",
+    "balanceTooltip": "Automatically updates every 3 seconds"
   },
   "home": {
     "title": "SAVOR THE",
@@ -95,7 +96,6 @@
   },
   "menu": {
     "title": "Our Menu",
-    "favoriteMenu": "Favorite Menu",
     "chooseYourFavorite": "Choose your favorite burger and add it to the cart.",
     "addToCart": "Add to Cart",
     "price": "Price",
@@ -105,7 +105,9 @@
     "noStock": "There is none",
     "filter": "Filter",
     "filterByCategory": "Filter by Category",
-    "sortBy": "Sort by"
+    "sortBy": "Sort by",
+    "favorite": "Favorite",
+    "menu": "Menu"
   },
   "deals": {
     "title": "Hot Deals",
@@ -118,7 +120,12 @@
     "discount": "Discount",
     "offerEnds": "Offer ends",
     "limited": "Limited",
-    "outOfStock": "Out of stock"
+    "outOfStock": "Out of stock",
+    "hot": "Hot",
+    "deals": "Deals",
+    "todayOffer": "Today is Best offer for you",
+    "specialComboPack": "Special Combo Pack",
+    "burgerBizz": "Burger Bizz Fries & Drinks"
   },
   "blog": {
     "title": "Our Blog",
@@ -177,7 +184,13 @@
     "profileUpdated": "Profile updated successfully",
     "updateError": "Failed to update profile",
     "changePassword": "Change Password",
-    "logout": "Logout"
+    "logout": "Logout",
+    "emailAddress": "Email Address",
+    "accountRole": "Account Role",
+    "memberSince": "Member Since",
+    "userId": "User ID",
+    "accountInformation": "Account Information",
+    "accountDescription": "Your profile is fully set up and ready to use. You can place orders, view your order history, and enjoy all features. Click the photo area above to upload a profile picture."
   },
   "payment": {
     "cardDetails": "Card Details",

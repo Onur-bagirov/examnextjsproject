@@ -1,22 +1,26 @@
 "use client";
 import { useSession } from "next-auth/react";
-import { redirect } from "next/navigation";
 import CardFormStyled from "@/components/base/pages/card-form";
 import { ArrowLeft, Check } from "lucide-react";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "@/i18n/routing";
+import { useEffect } from "react";
 
 export default function BalancePage() {
   const { status } = useSession();
   const t = useTranslations();
   const pathname = usePathname();
+  const router = useRouter();
   const currentLocale = pathname.split("/")[1] || "en";
 
-  if (status === "unauthenticated")   
+  useEffect(() => 
   {
-    redirect("/auth/signin");
-  }
+    if (status === "unauthenticated") 
+    {
+      router.push("/auth/signin");
+    }
+  }, [status, router]);
 
   if (status === "loading") 
   {
@@ -27,6 +31,20 @@ export default function BalancePage() {
             <div className="w-12 h-12 border-4 border-yellow-400 border-t-orange-500 rounded-full animate-spin"></div>
           </div>
           <p className="text-gray-900 text-xl font-semibold mt-4">{t("common.loading")}</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (status === "unauthenticated")
+  {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center">
+        <div className="text-center">
+          <div className="inline-block">
+            <div className="w-12 h-12 border-4 border-yellow-400 border-t-orange-500 rounded-full animate-spin"></div>
+          </div>
+          <p className="text-gray-900 text-xl font-semibold mt-4">Redirecting...</p>
         </div>
       </div>
     );

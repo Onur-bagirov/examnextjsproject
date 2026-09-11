@@ -149,7 +149,7 @@ export default function Header() {
                                 className={`flex items-center gap-2 ${getBalanceColor()} text-white font-bold px-4 py-2 rounded-lg transition-all ${
                                     balance > 0 ? "animate-pulse-soft" : ""
                                 }`}
-                                title="Automatically updates every 3 seconds">
+                                title={t("header.balanceTooltip")}>
                                 <Wallet className="w-5 h-5" />
                                 {loadingBalance ? "..." : `$${balance.toFixed(2)}`}
                             </button>
